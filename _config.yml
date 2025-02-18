@@ -58,7 +58,7 @@ plugins:
 
 author:
   avatar : "/assets/images/photo.jpg"
-  bio    : "My awesome biography constrained to a sentence or two goes here."
+  bio    : "My biography, condensed into a sentence or two, will go here when there's something interesting to share."
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
