@@ -58,7 +58,7 @@ plugins:
 
 author:
   avatar : "/assets/images/photo.jpg"
-  bio    : "My biography, condensed into a sentence or two, will go here when there's something interesting to share."
+  bio    : "Exploring ML/DL/RL/LLMs. From scratch, bit by bit. Starting coding with unit tests first, to make debugging later easier."
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
