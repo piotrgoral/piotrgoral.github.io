@@ -8,9 +8,9 @@ tags:
   - agent
   - llm
   - debuger
-header:
-  image: /assets/images/python-debugger-tool.png
 ---
+
+<img src="/assets/images/python-debugger-tool.png" alt="A description of the image" width="60%" style="display: block; margin: auto;">
 
 I’m currently participating in the **[AI Agents Course by Hugging Face](https://huggingface.co/learn/agents-course/unit0/introduction)**, which introduces a new AI agent framework called `smolagents`. [Smolagents](https://huggingface.co/docs/smolagents/en/index) is designed to support Code Agents—AI-driven agents capable of writing and executing code as part of their reasoning process.
 
