@@ -17,7 +17,7 @@ From this `blog/` directory:
 hugo server --port 1313
 ```
 
-Open http://localhost:1313/ — e.g. http://localhost:1313/posts/harness-engineering/
+Open http://localhost:1313/ — e.g. http://localhost:1313/posts/what-is-a-harness/
 
 The server live-reloads on changes. Add `-D` to include draft posts.
 

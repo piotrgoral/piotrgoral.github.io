@@ -1,7 +1,8 @@
 ---
-title: "What is Harness"
+title: "What is a Harness"
 date: 2026-09-13
-slug: harness-engineering
+slug: what-is-a-harness
+aliases: ["/posts/harness-engineering/"]
 tags: ["agents", "llm", "harness"]
 ShowToc: true
 TocOpen: false
