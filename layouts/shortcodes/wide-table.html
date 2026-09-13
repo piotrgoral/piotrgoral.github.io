@@ -1,4 +1,4 @@
-<figure class="wide-figure wide-table">
+<figure class="wide-figure wide-table{{ if .Get "heatmap" }} wide-table--heatmap{{ end }}">
 <div class="wide-table__bar"><button type="button" class="table-expand">View full table ↗</button></div>
 <div class="wide-table__scroll">
 
@@ -6,6 +6,18 @@
 
 </div>
 </figure>
+{{- if and (.Get "heatmap") (not (.Page.Scratch.Get "wideTableHeatmap")) }}
+{{- .Page.Scratch.Set "wideTableHeatmap" true }}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var levels = { '✓': 'good', 'M': 'good', '~': 'mid', 'P': 'mid', '–': 'bad', 'N': 'bad' };
+  document.querySelectorAll('.wide-table--heatmap td').forEach(function (td) {
+    var level = levels[td.textContent.trim()];
+    if (level) td.classList.add('hm-cell', 'hm-' + level);
+  });
+});
+</script>
+{{- end }}
 {{- if not (.Page.Scratch.Get "wideTableOverlay") }}
 {{- .Page.Scratch.Set "wideTableOverlay" true }}
 <script>

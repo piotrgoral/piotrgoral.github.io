@@ -124,9 +124,9 @@ At the most detailed level, descriptions like "the system around the model" are 
 
 The table below does that for sources that give an explicit or clearly reconstructable definition.
 
-**Legend:** ✓ explicitly included · ~ partially or implicitly included · – not mentioned (which is not the same as excluded). **Scope:** turn, session, or cross-session.
+**Legend:** <span class="hm-swatch hm-good">✓</span> explicitly included · <span class="hm-swatch hm-mid">~</span> partially or implicitly included · <span class="hm-swatch hm-bad">–</span> not mentioned (which is not the same as excluded). **Scope:** turn, session, or cross-session.
 
-{{% wide-table %}}
+{{% wide-table heatmap="true" %}}
 | Source | Definition (short) | Scope | Context | Tools | Agent loop | Orchestration | Environment | Verification | Memory | Interfaces |
 |---|---|---|---|---|---|---|---|---|---|---|
 | LangChain, *Anatomy of an Agent Harness*[^14] | "every piece of code, configuration, and execution logic that isn't the model itself" | cross-session | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | – |
@@ -426,9 +426,9 @@ One limitation is built into the analysis. Giving models the framework makes the
 
 Here is the full result. Rows are framework components, grouped by layer; columns are harnesses, grouped by type.
 
-**Legend:** M = Matched · P = Partial · N = Not matched
+**Legend:** <span class="hm-swatch hm-good">M</span> Matched · <span class="hm-swatch hm-mid">P</span> Partial · <span class="hm-swatch hm-bad">N</span> Not matched
 
-{{% wide-table %}}
+{{% wide-table heatmap="true" %}}
 | Layer | Component | Pi | Claude Code Python | Codex | OpenCode | DeepSeek | OpenHands | Deep Agents | Cayu | OpenClaw | Hermes |
 |---|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | | | *coding* | *coding* | *coding* | *coding* | *coding* | *computer use* | *SDK* | *SDK* | *assistant* | *assistant* |
@@ -700,18 +700,20 @@ Observability wasn't part of the analysis. It is usually built *on top of* harne
 
 ### What held up
 
+**Legend:** <span class="verdict verdict--confirmed">confirmed</span> · <span class="verdict verdict--qualified">qualified</span> · <span class="verdict verdict--moved">moved</span> · <span class="verdict verdict--added">added</span> · <span class="verdict verdict--na">not analyzed</span>
+
 | Layer | Component | Verdict |
 |---|---|---|
-| Prompt | Instructions | confirmed |
-| Prompt | Inference parameters | **qualified** |
-| Context | Composition, compaction, trimming, offloading | confirmed |
-| LLM agent | Tools, state, workflow; agentic loop and orchestration | confirmed |
-| Harness core | Environment | confirmed |
-| Harness core | Turn lifecycle | confirmed |
-| Harness core | Verification | confirmed |
-| Extension | Cross-session memory | confirmed |
-| Extension | Interfaces | confirmed |
-| Extension | Observability | not analyzed |
+| Prompt | Instructions | <span class="verdict verdict--confirmed">confirmed</span> |
+| Prompt | Inference parameters | <span class="verdict verdict--qualified">qualified</span> |
+| Context | Composition, compaction, trimming, offloading | <span class="verdict verdict--confirmed">confirmed</span> |
+| LLM agent | Tools, state, workflow; agentic loop and orchestration | <span class="verdict verdict--confirmed">confirmed</span> |
+| Harness core | Environment | <span class="verdict verdict--confirmed">confirmed</span> |
+| Harness core | Turn lifecycle | <span class="verdict verdict--confirmed">confirmed</span> |
+| Harness core | Verification | <span class="verdict verdict--confirmed">confirmed</span> |
+| Extension | Cross-session memory | <span class="verdict verdict--confirmed">confirmed</span> |
+| Extension | Interfaces | <span class="verdict verdict--confirmed">confirmed</span> |
+| Extension | Observability | <span class="verdict verdict--na">not analyzed</span> |
 
 The framework held up. **No boundary moved**, and nothing had to be added. The only qualification is inference parameters, which are real but thin and provider-dependent.
 
