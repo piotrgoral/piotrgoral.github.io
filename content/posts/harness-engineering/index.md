@@ -5,6 +5,9 @@ slug: harness-engineering
 tags: ["agents", "llm", "harness"]
 ShowToc: true
 TocOpen: false
+SideToc: true
+SideTocDepth: 1
+UseHugoToc: true
 ---
 
 ## In short

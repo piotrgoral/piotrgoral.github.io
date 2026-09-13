@@ -1,0 +1,94 @@
+{{- if and (.Param "SideToc") (.Param "ShowToc") }}
+<script>
+(() => {
+  const desktop = window.matchMedia('(min-width: 1300px)');
+  const toc = document.querySelector('details.toc');
+  if (!toc) return;
+
+  document.body.classList.add('side-toc-enabled');
+  {{- if eq (.Param "SideTocDepth") 1 }}
+  document.body.classList.add('side-toc-level-one');
+  {{- end }}
+
+  const tocInner = toc.querySelector('.inner');
+  const linkSelector = document.body.classList.contains('side-toc-level-one')
+    ? '#TableOfContents > ul > li > a'
+    : 'a[href^="#"]';
+  const links = Array.from(toc.querySelectorAll(linkSelector));
+  const sections = links.map((link) => {
+    const id = decodeURIComponent(link.hash.slice(1));
+    return { link, heading: document.getElementById(id) };
+  }).filter((section) => section.heading);
+
+  const wideVisuals = document.querySelectorAll('.wide-figure');
+  if (wideVisuals.length) {
+    const visibleVisuals = new Set();
+    const visualObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visibleVisuals.add(entry.target);
+        else visibleVisuals.delete(entry.target);
+      }
+      document.body.classList.toggle(
+        'side-toc-obscured',
+        desktop.matches && visibleVisuals.size > 0
+      );
+    }, { rootMargin: '-80px 0px -24px 0px' });
+    wideVisuals.forEach((visual) => visualObserver.observe(visual));
+    desktop.addEventListener('change', () => {
+      document.body.classList.toggle(
+        'side-toc-obscured',
+        desktop.matches && visibleVisuals.size > 0
+      );
+    });
+  }
+
+  const setDesktopState = () => {
+    if (desktop.matches) toc.open = true;
+  };
+
+  let activeLink;
+  const updateActiveSection = () => {
+    if (!sections.length) return;
+
+    const marker = Math.min(180, window.innerHeight * 0.25);
+    let current = sections[0];
+    for (const section of sections) {
+      if (section.heading.getBoundingClientRect().top <= marker) current = section;
+      else break;
+    }
+
+    if (current.link === activeLink) return;
+    if (activeLink) {
+      activeLink.classList.remove('is-active');
+      activeLink.removeAttribute('aria-current');
+    }
+    activeLink = current.link;
+    activeLink.classList.add('is-active');
+    activeLink.setAttribute('aria-current', 'location');
+
+    if (desktop.matches && toc.open && tocInner) {
+      const container = tocInner.getBoundingClientRect();
+      const item = activeLink.getBoundingClientRect();
+      if (item.top < container.top) tocInner.scrollTop -= container.top - item.top + 8;
+      if (item.bottom > container.bottom) tocInner.scrollTop += item.bottom - container.bottom + 8;
+    }
+  };
+
+  let ticking = false;
+  const requestUpdate = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateActiveSection();
+      ticking = false;
+    });
+  };
+
+  setDesktopState();
+  updateActiveSection();
+  desktop.addEventListener('change', setDesktopState);
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate, { passive: true });
+})();
+</script>
+{{- end }}
