@@ -299,7 +299,7 @@ Now we can add what chapter 3 deliberately left out, without blurring the bounda
 
 ### The expanded framework
 
-{{< diagram src="images/harness-framework-expanded.html" height="950" title="Expanded agent system framework" caption="The core framework with extensions in blue, the loop in orange, and amber marks on components a self-improving harness may rewrite between runs." >}}
+{{< diagram src="images/harness-framework-expanded.html" height="1050" title="Expanded agent system framework" caption="The core framework with extensions in blue, the loop in orange, and amber marks on components a self-improving harness may rewrite between runs." >}}
 
 ### Extending the framework
 
