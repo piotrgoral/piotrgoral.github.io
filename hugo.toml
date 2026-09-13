@@ -1,0 +1,56 @@
+baseURL = "https://piotrgoral.github.io/"
+locale = "en-us"
+title = "Piotr Goral"
+theme = "PaperMod"
+enableRobotsTXT = true
+
+[pagination]
+  pagerSize = 10
+
+[params]
+  env = "production"
+  description = "Exploring ML/DL/RL/LLMs. From scratch, bit by bit."
+  author = "Piotr Goral"
+  defaultTheme = "auto"
+  ShowReadingTime = true
+  ShowToc = true
+  TocOpen = false
+  ShowCodeCopyButtons = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = false
+  ShowShareButtons = false
+
+  [params.profileMode]
+    enabled = false
+
+  [params.homeInfoParams]
+    Title = "Piotr Goral"
+    Content = "Exploring ML/DL/RL/LLMs. From scratch, bit by bit. Starting coding with unit tests first, to make debugging later easier."
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/piotrgoral"
+
+  [[params.socialIcons]]
+    name = "linkedin"
+    url = "https://linkedin.com/piotrgoral"
+
+[menu]
+  [[menu.main]]
+    identifier = "posts"
+    name = "Posts"
+    url = "/posts/"
+    weight = 10
+  [[menu.main]]
+    identifier = "tags"
+    name = "Tags"
+    url = "/tags/"
+    weight = 20
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+    ordered = false

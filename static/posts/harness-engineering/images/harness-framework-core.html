@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent system framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECEEF1;
+    --card:#FFFFFF;
+    --ink:#161E29;
+    --ink-soft:#5C6875;
+    --hair:#D3D9E0;
+    --indent:26px;
+    --gap:14px;
+    --gutter:44px;
+    --islandpad:15px;
+    --boardw:990px;
+
+    --island:#EACCD5;
+    --island-hair:#C99AA8;
+
+    --prompt:#584A8C;
+    --context:#0F6B66;
+    --agent:#9A6414;
+    --harness:#96304A;
+  }
+
+  *{box-sizing:border-box}
+
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    margin:0;
+    padding:56px 40px 72px;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    font-weight:400;
+    line-height:1.45;
+  }
+
+  .masthead{max-width:62ch;margin:0 0 48px}
+  .masthead h1{
+    margin:0 0 10px;
+    font-size:clamp(1.7rem,1.2rem + 1.6vw,2.5rem);
+    font-weight:600;
+    letter-spacing:-0.02em;
+    line-height:1.1;
+  }
+  .masthead p{margin:0;color:var(--ink-soft);font-size:1.0625rem;font-weight:300}
+
+  .board-scroll{overflow-x:auto;padding:0 22px 30px 0;-webkit-overflow-scrolling:touch}
+
+  .board{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:0 var(--gutter);
+    align-items:start;
+    min-width:var(--boardw);
+  }
+
+  .track{--tint:var(--ink)}
+  .track--prompt{--tint:var(--prompt)}
+  .track--context{--tint:var(--context)}
+  .track--agent{--tint:var(--agent)}
+  .track--harness{--tint:var(--harness)}
+
+  /* the harness track sits apart, on its own raised ground */
+  .track--harness{
+    position:relative;
+    margin:-14px calc(-1 * var(--islandpad)) 0;
+    padding:13px var(--islandpad) 22px;
+    background:var(--island);
+    border:1px solid var(--island-hair);
+    border-radius:10px;
+    box-shadow:
+      0 1px 2px rgba(22,30,41,.05),
+      0 16px 32px -16px rgba(150,48,74,.38);
+  }
+  .track--harness .track__head{font-size:1.1875rem}
+  .track--harness .branch--sub .card{background:#fff}
+
+  .track__head{
+    position:relative;
+    margin:0;
+    padding:14px 16px 15px;
+    background:var(--tint);
+    color:#fff;
+    border-radius:2px;
+    font-size:1.125rem;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+
+
+  .branch{list-style:none;margin:0;padding:0}
+
+  .node{margin-top:var(--gap)}
+
+  .node__row{position:relative;padding-left:var(--indent)}
+  .node__row::before{           /* vertical rail */
+    content:"";position:absolute;left:0;top:calc(-1 * var(--gap));bottom:0;
+    width:1.5px;background:var(--tint);opacity:.55;
+  }
+  .branch > .node:last-child > .node__row::before{
+    bottom:auto;height:calc(var(--gap) + 50%);
+  }
+  .node__row::after{            /* horizontal tick */
+    content:"";position:absolute;left:0;top:50%;
+    width:var(--indent);height:1.5px;background:var(--tint);opacity:.55;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-left:3px solid var(--tint);
+    border-radius:4px;
+    padding:11px 13px;
+  }
+  .card b{display:block;font-weight:500;font-size:.9875rem;letter-spacing:-0.005em}
+  .card em{
+    display:block;margin-top:3px;
+    font-style:italic;font-weight:300;font-size:.8125rem;
+    color:var(--ink-soft);line-height:1.35;
+  }
+
+
+  .branch--sub{margin-left:calc(var(--indent) + 16px);position:relative}
+  /* keep the parent rail running down past a nested block to the next sibling */
+  .node:not(:last-child) > .branch--sub::before{
+    content:"";position:absolute;
+    left:calc(-1 * (var(--indent) + 16px));
+    top:calc(-1 * var(--gap));bottom:0;
+    width:1.5px;background:var(--tint);opacity:.55;
+  }
+  .branch--sub .card{background:#F7F8FA}
+  .branch--sub .card b{font-size:.9375rem}
+
+  .footnote{
+    max-width:62ch;margin:52px 0 0;padding-top:18px;
+    border-top:1px solid var(--hair);
+    color:var(--ink-soft);font-size:.875rem;font-weight:300;
+  }
+
+  @media (max-width:1080px){
+    :root{--gutter:30px;--indent:20px;--islandpad:12px;--boardw:870px}
+  }
+  @media (max-width:700px){
+    body{padding:36px 20px 48px}
+    :root{--gutter:24px;--islandpad:11px;--boardw:770px}
+    .board{font-size:.9375rem}
+    .track__head{font-size:1rem;padding:12px 14px 13px}
+    .track--harness .track__head{font-size:1.0625rem}
+  }
+  @media print{
+    body{background:#fff;padding:0}
+    .board{gap:24px 18px}
+    .track--harness{box-shadow:none;margin-top:0;margin-left:0;margin-right:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script>
+<style>
+  html.embedded body{padding:20px 16px 8px}
+  html.embedded .masthead{display:none}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <h1>Agent system framework</h1>
+  <p>Four layers you design separately: what the model is told, what it can see, what it can do, and what surrounds it.</p>
+</header>
+
+<div class="board-scroll">
+
+<main class="board">
+
+  <!-- PROMPT -->
+  <section class="track track--prompt">
+    <h2 class="track__head">Prompt</h2>
+    <ul class="branch">
+      <li class="node">
+        <div class="node__row"><div class="card"><b>Instructions</b></div></div>
+      </li>
+      <li class="node">
+        <div class="node__row"><div class="card"><b>Inference params</b></div></div>
+        <ul class="branch branch--sub">
+          <li class="node"><div class="node__row"><div class="card"><b>Sampling</b><em>temperature, top_k, top_p</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Reasoning</b><em>reasoning_effort</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Response control</b><em>response_format, stop, max_tokens</em></div></div></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <!-- CONTEXT -->
+  <section class="track track--context">
+    <h2 class="track__head">Context</h2>
+    <ul class="branch">
+      <li class="node"><div class="node__row"><div class="card"><b>Dynamic composition</b></div></div></li>
+      <li class="node"><div class="node__row"><div class="card"><b>Compaction</b></div></div></li>
+      <li class="node"><div class="node__row"><div class="card"><b>Trimming</b></div></div></li>
+      <li class="node"><div class="node__row"><div class="card"><b>Offloading</b></div></div></li>
+    </ul>
+  </section>
+
+  <!-- AGENT -->
+  <section class="track track--agent">
+    <h2 class="track__head"><em>(LLM)</em> Agent</h2>
+    <ul class="branch">
+      <li class="node"><div class="node__row"><div class="card"><b>Tools</b><em>including: skills, MCPs</em></div></div></li>
+      <li class="node"><div class="node__row"><div class="card"><b>State</b><em>including non-LLM run context</em><em>persistence: checkpoints</em></div></div></li>
+      <li class="node">
+        <div class="node__row"><div class="card"><b>Workflow</b></div></div>
+        <ul class="branch branch--sub">
+          <li class="node"><div class="node__row"><div class="card"><b>Config</b><em>recursion limit, retry policy</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Control</b><em>interruption, resume, replay, forking</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Sub-agents</b><em>context sharing</em></div></div></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <!-- HARNESS -->
+  <section class="track track--harness">
+    <h2 class="track__head">Harness core</h2>
+    <ul class="branch">
+      <li class="node">
+        <div class="node__row"><div class="card"><b>Environment</b></div></div>
+        <ul class="branch branch--sub">
+          <li class="node"><div class="node__row"><div class="card"><b>Observations</b><em>reading files, terminal, logs</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Control</b><em>permissions, approvals</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Runtime</b><em>isolation</em></div></div></li>
+        </ul>
+      </li>
+      <li class="node"><div class="node__row"><div class="card"><b>Turn lifecycle</b><em>hooks for: step, turn, session</em></div></div></li>
+      <li class="node"><div class="node__row"><div class="card"><b>Verification</b><em>examples: linters, unit tests</em></div></div></li>
+    </ul>
+  </section>
+
+</main>
+</div>
+
+<p class="footnote">Each coloured header is a layer; the boxes beneath it are that layer&rsquo;s components. Indented boxes are parts of the component directly above them. The harness core sits on its own raised panel: it is the layer this article is about.</p>
+
+<script>
+(function(){
+  if(window.self===window.top) return;
+  var last=0;
+  function post(){
+    var h=Math.ceil(document.documentElement.scrollHeight);
+    if(h!==last){ last=h; window.parent.postMessage({diagramHeight:h},'*'); }
+  }
+  window.addEventListener('load',post);
+  window.addEventListener('resize',post);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(post);
+  if(window.ResizeObserver) new ResizeObserver(post).observe(document.body);
+  post();
+})();
+</script>
+</body>
+</html>

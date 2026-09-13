@@ -1,0 +1,23 @@
+{{- $src := .Get "src" -}}
+{{- $title := .Get "title" | default "Diagram" -}}
+{{- $height := .Get "height" | default "760" -}}
+<figure class="wide-figure diagram-figure">
+  <iframe src="{{ $src }}" title="{{ $title }}" loading="lazy" scrolling="no"
+          style="width:100%;border:0;display:block;height:{{ $height }}px"></iframe>
+  <figcaption>
+    <strong>{{ $title }}.</strong>
+    {{ with .Get "caption" }}{{ . }}{{ end }}
+    <a href="{{ $src }}" target="_blank" rel="noopener">Open full size ↗</a>
+  </figcaption>
+</figure>
+{{- if not (.Page.Scratch.Get "diagramResizer") }}
+{{- .Page.Scratch.Set "diagramResizer" true }}
+<script>
+window.addEventListener('message', function (e) {
+  if (!e.data || typeof e.data.diagramHeight !== 'number') return;
+  document.querySelectorAll('.diagram-figure iframe').forEach(function (f) {
+    if (f.contentWindow === e.source) f.style.height = e.data.diagramHeight + 'px';
+  });
+});
+</script>
+{{- end }}

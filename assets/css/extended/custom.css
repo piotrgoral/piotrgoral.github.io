@@ -1,0 +1,41 @@
+/* Figures that break out of the text column (interactive diagrams) */
+.post-content .wide-figure {
+  width: min(1240px, calc(100vw - 32px));
+  margin: 2rem 0 2.5rem 50%;
+  transform: translateX(-50%);
+}
+.post-content .diagram-figure iframe {
+  border-radius: 8px;
+  background: #ECEEF1;
+}
+.post-content .wide-figure figcaption {
+  max-width: var(--main-width);
+  margin: 0.75rem auto 0;
+  padding: 0 var(--gap);
+  font-size: 0.9rem;
+  color: var(--secondary);
+  text-align: left;
+}
+
+/* Wide comparison tables scroll horizontally instead of overflowing */
+.post-content table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.post-content table th,
+.post-content table td {
+  white-space: normal;
+  min-width: 2.5rem;
+  font-size: 0.9rem;
+}
+/* Text-heavy leading columns get room; the table scrolls instead of squeezing */
+.post-content table th:nth-child(-n+2),
+.post-content table td:nth-child(-n+2) {
+  min-width: 13rem;
+}
+
+/* Footnotes */
+.post-content .footnotes {
+  font-size: 0.9rem;
+}

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent system framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECEEF1;
+    --card:#FFFFFF;
+    --ink:#161E29;
+    --ink-soft:#5C6875;
+    --hair:#D3D9E0;
+
+    --base:#7A8593;      /* everything that already existed */
+    --new:#3E6DC4;       /* added in this revision */
+    --new-wash:#EAF0FA;
+    --loop:#C9761C;      /* the self-improving loop */
+    --loop-wash:#FBF3E9;
+
+    --indent:26px;
+    --gap:14px;
+    --gutter:48px;
+    --islandpad:26px;
+    --boardw:1220px;
+
+    --island:#FCF7F1;
+    --island-hair:#E7D6BE;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    margin:0;
+    padding:56px 40px 72px;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    font-weight:400;
+    line-height:1.45;
+  }
+
+  .masthead{max-width:64ch;margin:0 0 40px}
+  .masthead h1{
+    margin:0 0 10px;
+    font-size:clamp(1.7rem,1.2rem + 1.6vw,2.5rem);
+    font-weight:600;
+    letter-spacing:-0.02em;
+    line-height:1.1;
+  }
+  .masthead p{margin:0;color:var(--ink-soft);font-size:1.0625rem;font-weight:300}
+
+  /* ---------- legend ---------- */
+  .legend{
+    display:flex;flex-wrap:wrap;gap:10px 26px;
+    margin:0 0 38px;padding:0;list-style:none;
+    font-size:.875rem;font-weight:300;color:var(--ink-soft);
+  }
+  .legend li{display:flex;align-items:center;gap:8px}
+  .swatch{width:22px;height:12px;border-radius:2px;flex:none}
+  .swatch--base{background:var(--base)}
+  .swatch--new{background:var(--new)}
+  .swatch--loop{background:var(--loop)}
+  .legend .loopmark{position:static;width:15px;height:15px}
+
+  .board-scroll{overflow-x:auto;padding:0 4px 30px 0;-webkit-overflow-scrolling:touch}
+
+  .board{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:0 var(--gutter);
+    align-items:start;
+    min-width:var(--boardw);
+  }
+
+  /* --tint drives rails and card rules; --head drives the header block */
+  .track{--tint:var(--base);--head:var(--base)}
+  .track--new{--tint:var(--new);--head:var(--new)}
+  .track--loop{--tint:var(--base);--head:var(--loop)}
+
+  .track__head{
+    display:flex;align-items:center;gap:10px;
+    margin:0;
+    padding:14px 16px 15px;
+    background:var(--head);
+    color:#fff;
+    border-radius:2px;
+    font-size:1.125rem;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+  .track__head em{font-style:normal;font-weight:400;opacity:.85}
+  .track__head .headmark{margin-left:auto;width:18px;height:18px;color:#fff;flex:none}
+
+  .branch{list-style:none;margin:0;padding:0}
+  .node{margin-top:var(--gap)}
+
+  .node__row{position:relative;padding-left:var(--indent)}
+  .node__row::before{                     /* vertical rail */
+    content:"";position:absolute;left:0;top:calc(-1 * var(--gap));bottom:0;
+    width:1.5px;background:var(--tint);opacity:.55;
+  }
+  .branch > .node:last-child > .node__row::before{
+    bottom:auto;height:calc(var(--gap) + 50%);
+  }
+  .node__row::after{                      /* horizontal tick */
+    content:"";position:absolute;left:0;top:50%;
+    width:var(--indent);height:1.5px;background:var(--tint);opacity:.55;
+  }
+
+  .card{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-left:3px solid var(--tint);
+    border-radius:4px;
+    padding:11px 13px;
+  }
+  .card b{display:block;font-weight:500;font-size:.9875rem;letter-spacing:-0.005em}
+  .card em{
+    display:block;margin-top:3px;
+    font-style:italic;font-weight:300;font-size:.8125rem;
+    color:var(--ink-soft);line-height:1.35;
+  }
+
+  /* added in this revision */
+  .card--new{
+    border-color:#BCCDE9;
+    border-left-color:var(--new);
+    background:var(--new-wash);
+  }
+  .card--new b{color:#23477F}
+
+  .card .add{
+    display:inline-block;padding:1px 7px 2px;
+    background:var(--new-wash);border:1px solid #BCCDE9;border-radius:3px;
+    color:#23477F;font-style:italic;
+  }
+  .card em.add{margin-top:6px}
+  .card em.inline-add{font-size:.75rem}
+  .card em.inline-add .add{white-space:nowrap}
+  .card em.inline-add .add{margin-left:3px;padding-left:5px;padding-right:5px}
+
+  /* the harness sits apart, on its own raised ground */
+  .track--loop{
+    position:relative;
+    margin:-14px calc(-1 * var(--islandpad)) 0;
+    padding:13px var(--islandpad) 22px;
+    background:var(--island);
+    border:1px solid var(--island-hair);
+    border-radius:10px;
+    box-shadow:
+      0 1px 2px rgba(22,30,41,.05),
+      0 16px 32px -16px rgba(201,118,28,.40);
+  }
+  .track--loop .branch--sub .card:not(.card--new):not(.card--target){background:#fff}
+  .harness-col{position:relative}
+  #cycle{
+    position:absolute;inset:0;width:100%;height:100%;
+    overflow:visible;pointer-events:none;z-index:2;
+  }
+  #cycle path.line{fill:none;stroke:var(--loop);stroke-width:1.75px}
+
+  /* the loop runs outside the harness and is fed by verification */
+  .loop-out{margin-top:34px;padding-left:calc(var(--indent) + 16px)}
+  .card--loop{
+    background:var(--loop);
+    border-color:var(--loop);
+    border-left-color:#9A5812;
+  }
+  .card--loop b{color:#fff}
+  .card--loop em{color:rgba(255,255,255,.86)}
+
+  /* observability spans every layer */
+  .board__top{
+    grid-column:1 / -1;
+    margin-bottom:34px;
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .brace{display:flex;width:100%;height:12px;position:relative}
+  .brace span{flex:1;border-top:1.5px solid var(--new)}
+  .brace span:first-child{border-left:1.5px solid var(--new);border-top-left-radius:10px}
+  .brace span:last-child{border-right:1.5px solid var(--new);border-top-right-radius:10px}
+  .brace::after{
+    content:"";position:absolute;left:50%;bottom:100%;
+    width:1.5px;height:8px;margin-left:-.75px;background:var(--new);
+  }
+  .board__top .track__head{display:inline-flex;margin-bottom:8px}
+
+  /* rewritten by the loop */
+  .card--target{
+    border-color:#E5CBA6;
+    border-left-color:var(--loop);
+    background:var(--loop-wash);
+  }
+  .card--target b{color:#8A4E0C;padding-right:22px}
+  .loopmark{
+    position:absolute;top:11px;right:11px;
+    width:15px;height:15px;color:var(--loop);
+  }
+
+  /* marked, but not amber-washed: keeps its own fill */
+  .card--marked b{padding-right:22px}
+  .card--solid .loopmark{color:#F8CD91}
+
+  .branch--sub{margin-left:calc(var(--indent) + 16px);position:relative}
+  .node:not(:last-child) > .branch--sub::before{
+    content:"";position:absolute;
+    left:calc(-1 * (var(--indent) + 16px));
+    top:calc(-1 * var(--gap));bottom:0;
+    width:1.5px;background:var(--tint);opacity:.55;
+  }
+  .branch--sub .card{background:#F7F8FA}
+  .branch--sub .card--new{background:var(--new-wash)}
+  .branch--sub .card--target{background:var(--loop-wash)}
+  .branch--sub .card b{font-size:.9375rem}
+
+  .card--solid{
+    background:var(--new);
+    border-color:var(--new);
+    border-left-color:#2C5099;
+  }
+  .branch--sub .card--solid{background:var(--new)}
+  .card--solid b{color:#fff}
+  .card--solid em{color:rgba(255,255,255,.86)}
+
+  .footnote{
+    max-width:64ch;margin:26px 0 0;padding-top:18px;
+    border-top:1px solid var(--hair);
+    color:var(--ink-soft);font-size:.875rem;font-weight:300;
+  }
+  .footnote p{margin:0 0 8px}
+  .footnote p:last-child{margin-bottom:0}
+
+  @media (max-width:1080px){
+    :root{--gutter:34px;--indent:20px;--islandpad:20px;--boardw:1110px}
+  }
+  @media (max-width:700px){
+    body{padding:36px 20px 48px}
+    :root{--gutter:26px;--islandpad:16px;--boardw:980px}
+    .board{font-size:.9375rem}
+    .track__head{font-size:1rem;padding:12px 14px 13px}
+  }
+  @media print{
+    body{background:#fff;padding:0}
+    .board{gap:24px 16px}
+    .track--loop{box-shadow:none;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script>
+<style>
+  html.embedded body{padding:20px 16px 8px}
+  html.embedded .masthead{display:none}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="loopmark" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11.5 20.5H21"/>
+    <path d="M16.4 3.6a2.3 2.3 0 0 1 3.2 3.2L7.4 19 3 20.2l1.2-4.4z"/>
+  </symbol>
+</svg>
+
+<header class="masthead">
+  <h1>Agent system framework</h1>
+  <p>Five layers you design separately: what the model is told, what it can see, what it can do, what surrounds it, and how people reach it.</p>
+</header>
+
+<div class="board-scroll">
+<main class="board">
+
+  <!-- OBSERVABILITY -->
+  <div class="board__top track--new">
+    <h2 class="track__head">Observability</h2>
+    <div class="brace" aria-hidden="true"><span></span><span></span></div>
+  </div>
+
+  <!-- PROMPT -->
+  <section class="track">
+    <h2 class="track__head">Prompt</h2>
+    <ul class="branch">
+      <li class="node">
+        <div class="node__row">
+          <div class="card card--target">
+            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <b>Instructions</b>
+          </div>
+        </div>
+      </li>
+      <li class="node">
+        <div class="node__row"><div class="card"><b>Inference params</b></div></div>
+        <ul class="branch branch--sub">
+          <li class="node"><div class="node__row"><div class="card"><b>Sampling</b><em>temperature, top_k, top_p</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Reasoning</b><em>reasoning_effort</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Response control</b><em>response_format, stop, max_tokens</em></div></div></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <!-- CONTEXT -->
+  <section class="track">
+    <h2 class="track__head">Context</h2>
+    <ul class="branch">
+      <li class="node"><div class="node__row"><div class="card"><b>Dynamic composition</b></div></div></li>
+      <li class="node"><div class="node__row"><div class="card"><b>Compaction</b></div></div></li>
+      <li class="node"><div class="node__row"><div class="card"><b>Trimming</b></div></div></li>
+      <li class="node"><div class="node__row"><div class="card"><b>Offloading</b></div></div></li>
+      <li class="node">
+        <div class="node__row">
+          <div class="card card--new card--solid card--marked">
+            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <b>Memory (cross-session)</b><em>encoding, retrieval, consolidation</em>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- AGENT -->
+  <section class="track">
+    <h2 class="track__head"><span><em>(LLM)</em> Agent</span></h2>
+    <ul class="branch">
+      <li class="node">
+        <div class="node__row">
+          <div class="card card--target">
+            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <b>Tools</b><em>including: skills, MCPs</em>
+          </div>
+        </div>
+      </li>
+      <li class="node"><div class="node__row"><div class="card"><b>State</b><em>including non-LLM run context</em><em>persistence: checkpoints</em></div></div></li>
+      <li class="node">
+        <div class="node__row">
+          <div class="card card--target">
+            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <b>Workflow</b>
+          </div>
+        </div>
+        <ul class="branch branch--sub">
+          <li class="node"><div class="node__row"><div class="card"><b>Config</b><em>recursion limit, retry policy</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Control</b><em>interruption, resume, replay, forking</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Sub-agents</b><em>context sharing</em></div></div></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <!-- SELF-IMPROVING HARNESS -->
+  <div class="harness-col">
+  <svg id="cycle" aria-hidden="true">
+    <defs>
+      <marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+        <path d="M0 0.6L7.4 4 0 7.4z" fill="#C9761C"/>
+      </marker>
+    </defs>
+  </svg>
+  <section class="track track--loop">
+    <h2 class="track__head">Self-improving harness<svg class="headmark" aria-hidden="true"><use href="#loopmark"/></svg></h2>
+    <ul class="branch">
+      <li class="node">
+        <div class="node__row"><div class="card"><b>Environment</b></div></div>
+        <ul class="branch branch--sub">
+          <li class="node"><div class="node__row"><div class="card"><b>Observations</b><em>reading files, terminal, logs</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Control</b><em>permissions, approvals</em></div></div></li>
+          <li class="node"><div class="node__row"><div class="card"><b>Runtime</b><em>isolation</em></div></div></li>
+        </ul>
+      </li>
+      <li class="node">
+        <div class="node__row">
+          <div class="card card--target">
+            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <b>Turn lifecycle</b><em class="inline-add">hooks for: step, turn, <span class="add">session</span></em>
+          </div>
+        </div>
+      </li>
+      <li class="node">
+        <div class="node__row">
+          <div class="card" data-node="verification">
+            <b>Verification</b>
+            <em class="inline-add">examples: linters, unit tests, <span class="add">LLM as a judge</span></em>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </section>
+  <div class="loop-out">
+    <div class="card card--loop" data-node="loop"><b>Loop</b><em>/goal</em></div>
+  </div>
+  </div>
+
+  <!-- INTERFACES -->
+  <section class="track track--new">
+    <h2 class="track__head">Interfaces</h2>
+    <ul class="branch">
+      <li class="node"><div class="node__row"><div class="card card--new"><b>TUI / CLI</b></div></div></li>
+      <li class="node"><div class="node__row"><div class="card card--new"><b>Desktop app</b></div></div></li>
+      <li class="node"><div class="node__row"><div class="card card--new"><b>Messaging apps</b><em>examples: Slack, WhatsApp</em></div></div></li>
+      <li class="node"><div class="node__row"><div class="card card--new"><b>Scheduled runs</b><em>cron, recurring tasks</em></div></div></li>
+    </ul>
+  </section>
+
+</main>
+</div>
+
+<ul class="legend">
+  <li><svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>Editable by the self-improving harness</li>
+  <li><span class="swatch swatch--new"></span>Extensions</li>
+  <li><span class="swatch swatch--loop"></span>Loop (runs outside the harness, fed by verification)</li>
+</ul>
+
+<div class="footnote">
+  <p>Each coloured header is a layer; the boxes beneath it are that layer&rsquo;s components. Indented boxes are parts of the component directly above them.</p>
+  <p>Blue boxes are extensions to the original framework: memory, verification by an LLM judge, the interfaces layer, and observability, which spans every layer. The orange Loop runs outside the harness; Verification feeds it, and each pass comes back to be verified again. The amber mark shows what the harness can rewrite between runs &mdash; instructions, memory, tools, workflow, and lifecycle hooks.</p>
+</div>
+
+<script>
+(function(){
+  var track = document.querySelector('.harness-col');
+  var svg   = document.getElementById('cycle');
+  var NS    = 'http://www.w3.org/2000/svg';
+
+  function box(name){
+    var el = track.querySelector('[data-node="'+name+'"]');
+    var r = el.getBoundingClientRect(), t = track.getBoundingClientRect();
+    return {l:r.left-t.left, r:r.right-t.left, t:r.top-t.top, b:r.bottom-t.top,
+            cy:r.top-t.top+r.height/2};
+  }
+
+  function draw(){
+    svg.querySelectorAll('path.line').forEach(function(o){ o.remove(); });
+
+    var W = track.offsetWidth, H = track.offsetHeight;
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+
+    var v = box('verification'), l = box('loop');
+    var y  = v.b - 14;                        /* both sides: below where the tree rail ends */
+    var ll = v.l - 13;                        /* left lane, between rail and card */
+    var rl = v.r + 13;                        /* right lane, inside the panel margin */
+
+    [
+      'M'+v.l+' '+y+'H'+ll+'V'+l.cy+'H'+(l.l-1),   /* verification -> loop, on the left */
+      'M'+l.r+' '+l.cy+'H'+rl+'V'+y+'H'+(v.r+1)    /* loop -> verification, on the right */
+    ].forEach(function(d){
+      var p = document.createElementNS(NS,'path');
+      p.setAttribute('class','line');
+      p.setAttribute('d',d);
+      p.setAttribute('marker-end','url(#tip)');
+      svg.appendChild(p);
+    });
+  }
+
+  function schedule(){ window.requestAnimationFrame(draw); }
+  schedule();
+  window.addEventListener('resize', schedule);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  if(window.ResizeObserver) new ResizeObserver(schedule).observe(track);
+})();
+</script>
+
+<script>
+(function(){
+  if(window.self===window.top) return;
+  var last=0;
+  function post(){
+    var h=Math.ceil(document.documentElement.scrollHeight);
+    if(h!==last){ last=h; window.parent.postMessage({diagramHeight:h},'*'); }
+  }
+  window.addEventListener('load',post);
+  window.addEventListener('resize',post);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(post);
+  if(window.ResizeObserver) new ResizeObserver(post).observe(document.body);
+  post();
+})();
+</script>
+</body>
+</html>
