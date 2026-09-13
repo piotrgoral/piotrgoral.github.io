@@ -118,16 +118,25 @@ So the same word points at both the whole and one of its parts. To avoid that tr
 
 ### Prompt → Context → LLM agent → Harness
 
-One level lower, we can place the harness after components that are already familiar:
+One level lower, sources place the harness after components that are already familiar:
 
-- **Prompt engineering** shapes the instructions for a model call.
-- **Context engineering** shapes the information available to the model.
-- **An LLM agent** adds tools and an iterative loop for taking action.
-- **A harness** adds the surrounding environment, constraints, persistence, and feedback that support that action.
+- **Prompt engineering** shapes the input of a single model call.
+- **Context engineering** shapes what the model sees across multiple steps.
+- **Harness engineering** shapes the system that runs the model: environment, constraints, persistence, and feedback.
 
-Several sources present a version of this progression. MadPlay moves from prompt and context engineering to designing the agent's whole environment[^19]. *Agent Harness Engineering: A Survey* describes the same move as a progression from single-request optimization to multi-step context optimization and then system-level optimization[^4]. Caleb Writes Code calls harness engineering "one layer above context engineering"[^20]. Sam Bhagwat emphasizes the durability and persistence added around an agent[^21], while YC Paper Club describes the harness as the layer between the LLM and the world[^11].
+<figure class="wide-figure" style="width:min(1000px, calc(100vw - 32px))">
+<img src="images/prompt-context-harness-progression.png" alt="Three panels under one arrow: Prompt Engineering (optimize the model input), Context Engineering (optimize what the model sees), and Harness Engineering (optimize how the model runs), which includes tools and environment, orchestration, verification and evaluation, and governance and security" style="width:100%;display:block">
+</figure>
 
-<!-- VISUAL: progression strip Prompt → Context → LLM agent → Harness, one short "design target" label per stage. Candidates to adapt: harness-materials/papers/Paper_Agent_Harness_Engineering-A_Survey/fig1.png (arrow of scopes) and harness-materials/articles/MadPlay_Beyond_Prompts_and_Context-Harness_Engineering_for_AI_Agents/figure_1.png (nested sets). -->
+<div style="text-align:center">
+
+*Source:* *Agent Harness Engineering: A Survey*, Figure 1.[^4]
+
+</div>
+
+Several sources present a version of this progression. MadPlay moves from prompt and context engineering to designing the agent's whole environment[^19]. *Agent Harness Engineering: A Survey* describes the same move as a progression from single-call optimization to multi-step context optimization and then system-level optimization[^4]. Caleb Writes Code calls harness engineering "one layer above context engineering"[^20]. Sam Bhagwat emphasizes the durability and persistence added around an agent[^21], while YC Paper Club describes the harness as the layer between the LLM and the world[^11].
+
+An even cleaner decomposition adds one step between context and harness: **Prompt → Context → LLM agent → Harness**. **An LLM agent** adds tools and an iterative loop for taking action, and **the harness** adds the surrounding environment, constraints, persistence, and feedback that support that action.
 
 ### Comparing definitions by dimension
 
