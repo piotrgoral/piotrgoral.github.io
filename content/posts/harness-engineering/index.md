@@ -1,8 +1,7 @@
 ---
-title: "Harness Engineering"
+title: "What is harness"
 date: 2026-09-13
 slug: harness-engineering
-description: "Why the harness layer needs a clearer definition, a layered framework for agent systems, and how it holds up against real harnesses."
 tags: ["agents", "llm", "harness"]
 ShowToc: true
 TocOpen: false
@@ -121,6 +120,7 @@ The table below does that for sources that give an explicit or clearly reconstru
 
 **Legend:** ✓ explicitly included · ~ partially or implicitly included · – not mentioned (which is not the same as excluded). **Scope:** turn, session, or cross-session.
 
+{{% wide-table %}}
 | Source | Definition (short) | Scope | Context | Tools | Agent loop | Orchestration | Environment | Verification | Memory | Interfaces |
 |---|---|---|---|---|---|---|---|---|---|---|
 | LangChain, *Anatomy of an Agent Harness*[^14] | "every piece of code, configuration, and execution logic that isn't the model itself" | cross-session | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | – |
@@ -139,6 +139,7 @@ The table below does that for sources that give an explicit or clearly reconstru
 | YC Paper Club, *Why the Harness Matters More Than the Model*[^11] | "the layer between the LLM and the world" | cross-session | ~ | ✓ | ~ | ✓ | ✓ | – | ✓ | – |
 | Sam Bhagwat (Mastra), *Every Harness Will Become a Claw*[^20] | agent → harness adds "durability and doggedness" | cross-session | ✓ | ✓ | – | ✓ | ✓ | – | ✓ | ✓ |
 | The Pragmatic Engineer, *Building Pi*[^9] | "everything around the LLM" (describing Claude Code) | session | ✓ | ✓ | ✓ | – | ~ | ~ | – | ✓ |
+{{% /wide-table %}}
 
 <!-- TODO: second-pass check of every "~" and "–" cell against the raw source; cells were derived from harness-materials/what_is_harness/inputs/* and spot-checked quotes. -->
 
@@ -292,7 +293,7 @@ Now we can add what chapter 3 deliberately left out, without blurring the bounda
 
 ### The expanded framework
 
-{{< diagram src="images/harness-framework-expanded.html" height="1100" title="Expanded agent system framework" caption="The core framework with extensions in blue, the loop in orange, and amber marks on components a self-improving harness may rewrite between runs." >}}
+{{< diagram src="images/harness-framework-expanded.html" height="950" title="Expanded agent system framework" caption="The core framework with extensions in blue, the loop in orange, and amber marks on components a self-improving harness may rewrite between runs." >}}
 
 ### Extending the framework
 
@@ -421,6 +422,7 @@ Here is the full result. Rows are framework components, grouped by layer; column
 
 **Legend:** M = Matched · P = Partial · N = Not matched
 
+{{% wide-table %}}
 | Layer | Component | Pi | Claude Code Python | Codex | OpenCode | DeepSeek | OpenHands | Deep Agents | Cayu | OpenClaw | Hermes |
 |---|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | | | *coding* | *coding* | *coding* | *coding* | *coding* | *computer use* | *SDK* | *SDK* | *assistant* | *assistant* |
@@ -451,11 +453,13 @@ Here is the full result. Rows are framework components, grouped by layer; column
 | Extension: interfaces | Messaging apps (Slack, WhatsApp) | N | N | N | P | N | P | M | N | M | M |
 | Extension: interfaces | Scheduled runs (cron, recurring tasks) | N | N | P | N | P | M | M | P | M | M |
 | Operating on | Loop: `/goal` | N | N | M | N | M | M | M | N | M | M |
+{{% /wide-table %}}
 
 <!-- TODO: link each cell (or at least each N/P) to evidence in a public appendix; for now evidence lives in harness-code-analysis/framework_summaries/inputs/*. -->
 
 And the totals:
 
+{{% wide-table %}}
 | Harness | Type | Matched | Partial | Not matched | Full-match rate |
 |---|---|---:|---:|---:|---:|
 | Pi | coding | 9 | 11 | 7 | 33.3% |
@@ -468,6 +472,7 @@ And the totals:
 | Cayu | SDK | 19 | 5 | 3 | 70.4% |
 | OpenClaw | assistant | 24 | 3 | 0 | 88.9% |
 | Hermes Agent | assistant | 24 | 3 | 0 | 88.9% |
+{{% /wide-table %}}
 
 One caveat before reading these numbers as a ranking: they measure fit to *framework rubric*, not the quality of the harness. A low score can reflect a deliberate architecture — a simple loop, behavior left to extensions, or enforcement in a companion service.
 

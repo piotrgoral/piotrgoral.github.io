@@ -35,6 +35,79 @@
   min-width: 13rem;
 }
 
+/* Wide tables: break out of the text column; scroll only when the screen is narrow */
+.post-content .wide-table__bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.4rem;
+}
+.table-expand,
+.table-overlay__close {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--entry);
+  color: var(--primary);
+  cursor: pointer;
+}
+.post-content .wide-table__scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.post-content .wide-table table,
+.table-overlay table {
+  display: table;
+  width: 100%;
+  overflow: visible;
+}
+/* Only the second (text) column needs the wide minimum here */
+.post-content .wide-table table th:first-child,
+.post-content .wide-table table td:first-child,
+.table-overlay table th:first-child,
+.table-overlay table td:first-child {
+  min-width: 7rem;
+}
+.table-overlay table th:nth-child(2),
+.table-overlay table td:nth-child(2) {
+  min-width: 13rem;
+}
+
+/* Fullscreen table overlay */
+.table-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 16px;
+}
+.table-overlay__panel {
+  height: 100%;
+  overflow: auto;
+  background: var(--theme);
+  color: var(--primary);
+  border-radius: 8px;
+  padding: 3rem 1rem 1rem;
+  position: relative;
+}
+.table-overlay__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+}
+.table-overlay table th,
+.table-overlay table td {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+/* Adjacent footnote refs: 1,4 instead of 14 */
+.post-content sup + sup::before {
+  content: ",";
+}
+
 /* Footnotes */
 .post-content .footnotes {
   font-size: 0.9rem;

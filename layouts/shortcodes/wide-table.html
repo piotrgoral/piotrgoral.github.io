@@ -1,0 +1,38 @@
+<figure class="wide-figure wide-table">
+<div class="wide-table__bar"><button type="button" class="table-expand">View full table ↗</button></div>
+<div class="wide-table__scroll">
+
+{{ .Inner }}
+
+</div>
+</figure>
+{{- if not (.Page.Scratch.Get "wideTableOverlay") }}
+{{- .Page.Scratch.Set "wideTableOverlay" true }}
+<script>
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest('.table-expand');
+  if (!btn) return;
+  var table = btn.closest('.wide-table').querySelector('table');
+  var overlay = document.createElement('div');
+  overlay.className = 'table-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.innerHTML = '<div class="table-overlay__panel post-content"><button type="button" class="table-overlay__close" aria-label="Close">✕ Close</button></div>';
+  overlay.firstChild.appendChild(table.cloneNode(true));
+  function close() {
+    overlay.remove();
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', onKey);
+    btn.focus();
+  }
+  function onKey(ev) { if (ev.key === 'Escape') close(); }
+  overlay.addEventListener('click', function (ev) {
+    if (ev.target === overlay || ev.target.closest('.table-overlay__close')) close();
+  });
+  document.addEventListener('keydown', onKey);
+  document.body.style.overflow = 'hidden';
+  document.body.appendChild(overlay);
+  overlay.querySelector('.table-overlay__close').focus();
+});
+</script>
+{{- end }}

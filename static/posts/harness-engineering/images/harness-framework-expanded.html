@@ -32,11 +32,11 @@
   }
 
   *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
+  html{-webkit-text-size-adjust:100%;zoom:.85}
 
   body{
     margin:0;
-    padding:56px 40px 72px;
+    padding:28px 24px 36px;
     background:var(--paper);
     color:var(--ink);
     font-family:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
@@ -449,5 +449,19 @@
 })();
 </script>
 
+<script>
+/* Report rendered height so the embedding page can size the iframe */
+(function(){
+  if(window.parent===window) return;
+  function report(){
+    var h=Math.ceil(document.documentElement.getBoundingClientRect().height*(parseFloat(getComputedStyle(document.documentElement).zoom)||1));
+    window.parent.postMessage({diagramHeight:h},'*');
+  }
+  window.addEventListener('load',report);
+  window.addEventListener('resize',report);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(report);
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+})();
+</script>
 </body>
 </html>
