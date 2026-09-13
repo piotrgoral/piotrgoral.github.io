@@ -25,7 +25,7 @@ enableRobotsTXT = true
 
   [params.homeInfoParams]
     Title = "Piotr Goral"
-    Content = "Exploring ML/DL/RL/LLMs. From scratch, bit by bit. Starting coding with unit tests first, to make debugging later easier."
+    Content = "AI from first principles"
 
   [[params.socialIcons]]
     name = "github"
