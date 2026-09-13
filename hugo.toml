@@ -1,6 +1,6 @@
 baseURL = "https://piotrgoral.github.io/"
 locale = "en-us"
-title = "Piotr Goral"
+title = "AI from first principles"
 theme = "PaperMod"
 enableRobotsTXT = true
 
@@ -24,8 +24,8 @@ enableRobotsTXT = true
     enabled = false
 
   [params.homeInfoParams]
-    Title = "Piotr Goral"
-    Content = "AI from first principles"
+    Title = "AI from first principles"
+    Content = "any AI"
 
   [[params.socialIcons]]
     name = "github"
