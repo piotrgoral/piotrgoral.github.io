@@ -41,7 +41,11 @@ The survey *Agent Harness for Large Language Model Agents* collects several stud
 
 <img src="images/impact-with-and-without-harness.png" alt="Performance impact of changing the agent harness while keeping the model fixed" width="90%">
 
+<div class="img-source">
+
 *Source:* Figure 4 ("Empirical evidence matrix") in *Agent Harness for Large Language Model Agents: A Survey*.[^1]
+
+</div>
 
 These results come from different benchmarks and setups, so they aren't directly comparable. But together they show that the harness isn't a neutral implementation detail — and that we need to be precise about what belongs inside it.
 
@@ -102,7 +106,7 @@ LangChain's *The Anatomy of an Agent Harness* puts it most bluntly: "A harness i
 
 <img src="images/agent-model-and-harness.png" alt="The model wrapped by the harness, with a loop running around it: the user sends a prompt and receives a response" width="45%" style="display:block;margin:0 auto">
 
-<div style="text-align:center">
+<div class="img-source" style="text-align:center">
 
 *Source:* Caleb Writes Code, *Why harness is SO expensive*.[^17]
 
@@ -128,7 +132,7 @@ One level lower, sources place the harness after components that are already fam
 <img src="images/prompt-context-harness-progression.png" alt="Three panels under one arrow: Prompt Engineering (optimize the model input), Context Engineering (optimize what the model sees), and Harness Engineering (optimize how the model runs), which includes tools and environment, orchestration, verification and evaluation, and governance and security" style="width:100%;display:block">
 </figure>
 
-<div style="text-align:center">
+<div class="img-source" style="text-align:center">
 
 *Source:* *Agent Harness Engineering: A Survey*, Figure 1.[^4]
 

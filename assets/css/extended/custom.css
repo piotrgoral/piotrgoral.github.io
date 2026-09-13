@@ -254,3 +254,13 @@ table td.hm-cell {
     font-weight: 600;
   }
 }
+
+/* Image source captions: <div class="img-source"> *Source:* … </div> */
+.post-content .img-source {
+  margin: 0.25rem 0 1.75rem;
+  font-size: 0.85rem;
+  color: var(--secondary);
+}
+.post-content .img-source p {
+  margin: 0;
+}

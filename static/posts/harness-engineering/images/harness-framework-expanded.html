@@ -414,8 +414,9 @@
   function box(name){
     var el = track.querySelector('[data-node="'+name+'"]');
     var r = el.getBoundingClientRect(), t = track.getBoundingClientRect();
-    return {l:r.left-t.left, r:r.right-t.left, t:r.top-t.top, b:r.bottom-t.top,
-            cy:r.top-t.top+r.height/2};
+    var k = track.offsetWidth / t.width;      /* undo CSS zoom: rects are zoomed, the viewBox is not */
+    return {l:(r.left-t.left)*k, r:(r.right-t.left)*k, t:(r.top-t.top)*k, b:(r.bottom-t.top)*k,
+            cy:(r.top-t.top+r.height/2)*k};
   }
 
   function draw(){
@@ -454,7 +455,7 @@
 (function(){
   if(window.parent===window) return;
   function report(){
-    var h=Math.ceil(document.documentElement.getBoundingClientRect().height*(parseFloat(getComputedStyle(document.documentElement).zoom)||1));
+    var h=Math.ceil(document.documentElement.getBoundingClientRect().height); /* already includes CSS zoom */
     window.parent.postMessage({diagramHeight:h},'*');
   }
   window.addEventListener('load',report);
