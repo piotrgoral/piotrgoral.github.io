@@ -97,7 +97,15 @@ At the highest level, the harness is often defined through a simple formula:
 
 LangChain's *The Anatomy of an Agent Harness* puts it most bluntly: "A harness is every piece of code, configuration, and execution logic that isn't the model itself"[^14]. NVIDIA's Nemotron Labs session with LangChain says the same thing in fewer words — the harness is "essentially all the software around it"[^15]. Harrison Chase narrows it to a job description: "The main job of a harness is to bring context to the model at the right point in time"[^16].
 
-The formula is useful, but it hides an ambiguity. In "Agent = Model + Harness", *agent* means the complete system — often a whole product like Claude Code or Codex. Yet many of the same sources also use *agent* for something much smaller: the loop that calls the model and executes tools. Mitchell Hashimoto defines an agent as "an LLM that can chat and invoke external behavior in a loop"[^13]. OpenAI calls the Codex harness the thing that "provides the core agent loop"[^17]. And *From Question Answering to Task Completion* explicitly warns that "two abstraction levels are often conflated in the agent literature"[^5].
+<img src="images/agent-model-and-harness.png" alt="The model wrapped by the harness, with a loop running around it: the user sends a prompt and receives a response" width="45%" style="display:block;margin:0 auto">
+
+<div style="text-align:center">
+
+*Source:* Caleb Writes Code, *Why harness is SO expensive*.[^17]
+
+</div>
+
+The formula is useful, but it hides an ambiguity. In "Agent = Model + Harness", *agent* means the complete system — often a whole product like Claude Code or Codex. Yet many of the same sources also use *agent* for something much smaller: the loop that calls the model and executes tools. Mitchell Hashimoto defines an agent as "an LLM that can chat and invoke external behavior in a loop"[^13]. OpenAI calls the Codex harness the thing that "provides the core agent loop"[^18]. And *From Question Answering to Task Completion* explicitly warns that "two abstraction levels are often conflated in the agent literature"[^5].
 
 So the same word points at both the whole and one of its parts. To avoid that trap, the rest of this article uses three terms:
 
@@ -114,7 +122,7 @@ One level lower, we can place the harness after components that are already fami
 - **An LLM agent** adds tools and an iterative loop for taking action.
 - **A harness** adds the surrounding environment, constraints, persistence, and feedback that support that action.
 
-Several sources present a version of this progression. MadPlay moves from prompt and context engineering to designing the agent's whole environment[^18]. *Agent Harness Engineering: A Survey* describes the same move as a progression from single-request optimization to multi-step context optimization and then system-level optimization[^4]. Caleb Writes Code calls harness engineering "one layer above context engineering"[^19]. Sam Bhagwat emphasizes the durability and persistence added around an agent[^20], while YC Paper Club describes the harness as the layer between the LLM and the world[^11].
+Several sources present a version of this progression. MadPlay moves from prompt and context engineering to designing the agent's whole environment[^19]. *Agent Harness Engineering: A Survey* describes the same move as a progression from single-request optimization to multi-step context optimization and then system-level optimization[^4]. Caleb Writes Code calls harness engineering "one layer above context engineering"[^20]. Sam Bhagwat emphasizes the durability and persistence added around an agent[^21], while YC Paper Club describes the harness as the layer between the LLM and the world[^11].
 
 <!-- VISUAL: progression strip Prompt → Context → LLM agent → Harness, one short "design target" label per stage. Candidates to adapt: harness-materials/papers/Paper_Agent_Harness_Engineering-A_Survey/fig1.png (arrow of scopes) and harness-materials/articles/MadPlay_Beyond_Prompts_and_Context-Harness_Engineering_for_AI_Agents/figure_1.png (nested sets). -->
 
@@ -130,11 +138,11 @@ The table below does that for sources that give an explicit or clearly reconstru
 | Source | Definition (short) | Scope | Context | Tools | Agent loop | Orchestration | Environment | Verification | Memory | Interfaces |
 |---|---|---|---|---|---|---|---|---|---|---|
 | LangChain, *Anatomy of an Agent Harness*[^14] | "every piece of code, configuration, and execution logic that isn't the model itself" | cross-session | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | – |
-| OpenAI, *Unrolling the Codex agent loop*[^17] | "provides the core agent loop and execution logic" | session | ✓ | ✓ | ✓ | – | ✓ | – | – | ~ |
+| OpenAI, *Unrolling the Codex agent loop*[^18] | "provides the core agent loop and execution logic" | session | ✓ | ✓ | ✓ | – | ✓ | – | – | ~ |
 | Anthropic, *Effective harnesses for long-running agents*[^2] | Claude Agent SDK as "a general-purpose agent harness" | cross-session | ✓ | ✓ | ~ | ~ | ✓ | ✓ | ✓ | – |
-| Anthropic, *How Claude Code works in large codebases*[^21] | "the ecosystem built around the model" | session | ✓ | ✓ | – | ~ | ~ | ~ | ~ | – |
-| Lilian Weng, *Harness Engineering for Self-Improvement*[^22] | "the system surrounding a base model that orchestrates execution" | cross-session | ✓ | ✓ | ✓ | ✓ | ~ | ✓ | ✓ | – |
-| MadPlay, *Beyond Prompts and Context*[^18] | "the full environment of scaffolding, constraints, and feedback loops" | cross-session | ✓ | ✓ | – | ✓ | ✓ | ✓ | ~ | – |
+| Anthropic, *How Claude Code works in large codebases*[^22] | "the ecosystem built around the model" | session | ✓ | ✓ | – | ~ | ~ | ~ | ~ | – |
+| Lilian Weng, *Harness Engineering for Self-Improvement*[^23] | "the system surrounding a base model that orchestrates execution" | cross-session | ✓ | ✓ | ✓ | ✓ | ~ | ✓ | ✓ | – |
+| MadPlay, *Beyond Prompts and Context*[^19] | "the full environment of scaffolding, constraints, and feedback loops" | cross-session | ✓ | ✓ | – | ✓ | ✓ | ✓ | ~ | – |
 | *Agent Harness Engineering: A Survey* (ETCLOVG)[^4] | "the engineered wrapper that turns model calls into bounded, stateful, tool-mediated task execution" | cross-session | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | – |
 | *Agent Harness for LLM Agents: A Survey* (ETCSLV)[^1] | "a software system that implements six runtime governance functions" | cross-session | ✓ | ✓ | ✓ | ~ | ~ | ✓ | ✓ | – |
 | *From Question Answering to Task Completion*[^5] | "the runtime infrastructure that surrounds the model" | cross-session | ✓ | ✓ | ✓ | ~ | ✓ | ✓ | ✓ | – |
@@ -143,7 +151,7 @@ The table below does that for sources that give an explicit or clearly reconstru
 | Tejas Kumar, *Harnesses in AI*[^8] | "everything around the model that gives it grounding in reality" | session | ✓ | ✓ | ✓ | ~ | ✓ | ✓ | – | – |
 | Harrison Chase, *When to Build Your Own Agent Harness*[^16] | "bring context to the model at the right point in time" | session | ✓ | ✓ | ✓ | ✓ | ✓ | – | ✓ | – |
 | YC Paper Club, *Why the Harness Matters More Than the Model*[^11] | "the layer between the LLM and the world" | cross-session | ~ | ✓ | ~ | ✓ | ✓ | – | ✓ | – |
-| Sam Bhagwat (Mastra), *Every Harness Will Become a Claw*[^20] | agent → harness adds "durability and doggedness" | cross-session | ✓ | ✓ | – | ✓ | ✓ | – | ✓ | ✓ |
+| Sam Bhagwat (Mastra), *Every Harness Will Become a Claw*[^21] | agent → harness adds "durability and doggedness" | cross-session | ✓ | ✓ | – | ✓ | ✓ | – | ✓ | ✓ |
 | The Pragmatic Engineer, *Building Pi*[^9] | "everything around the LLM" (describing Claude Code) | session | ✓ | ✓ | ✓ | – | ~ | ~ | – | ✓ |
 {{% /wide-table %}}
 
@@ -270,7 +278,7 @@ It has three components.
 - **Control:** permissions and approvals.
 - **Runtime:** execution and isolation.
 
-One point matters more than it first seems: an LLM agent's real output is often a change in the environment. OpenAI puts it directly when describing Codex: "the primary output of a software agent is the code it writes or edits on your machine"[^17]. The final assistant message — "I added the architecture.md you asked for" — only reports the result. The actual result is modified code, new files, deployed infrastructure, or another change in environment state.
+One point matters more than it first seems: an LLM agent's real output is often a change in the environment. OpenAI puts it directly when describing Codex: "the primary output of a software agent is the code it writes or edits on your machine"[^18]. The final assistant message — "I added the architecture.md you asked for" — only reports the result. The actual result is modified code, new files, deployed infrastructure, or another change in environment state.
 
 That's why we describe the harness through state transitions and observable effects, not only through model messages.
 
@@ -350,7 +358,7 @@ These signals describe how the system as a whole is doing. OpenAI's harness engi
 
 This article is about the harness, so the self-improving harness gets only its outline here; the details are for future articles.
 
-In her blogpost on self-improvement, Lilian Weng describes harness engineering as closer to runtime and system design: "how the model observes, acts, memorizes, checks itself, and improves"[^22]. Improvement is right there on the list. In our framework, self-improvement is not a component at the same level as memory or interfaces. It is a **feedback mechanism over components**:
+In her blogpost on self-improvement, Lilian Weng describes harness engineering as closer to runtime and system design: "how the model observes, acts, memorizes, checks itself, and improves"[^23]. Improvement is right there on the list. In our framework, self-improvement is not a component at the same level as memory or interfaces. It is a **feedback mechanism over components**:
 
 1. **Observe** execution and outcomes — using environment and observability.
 2. **Verify** — tests, linters, or an LLM as a judge.
@@ -359,7 +367,7 @@ In her blogpost on self-improvement, Lilian Weng describes harness engineering a
 
 This is where clearly defined components pay off. A self-improving harness needs to know which parts it is *allowed* to rewrite. "Improve the harness" is not an actionable instruction; "rewrite this skill" or "add this rule to the instructions" is. Session hooks are a natural place to trigger it — once a session ends, there is something to evaluate.
 
-One caution: a self-improving harness optimizes whatever signal it is given. Weng lists weak evaluators and reward hacking among the main bottlenecks: "if the reward comes from unit tests, the agent may overfit to tests"[^22]. Her suggestion fits the framework's boundaries well: the evaluator and permission control should sit outside the process that evolves the harness[^22]. In other words, verification and environment control are exactly the components a self-improving harness should *not* rewrite.
+One caution: a self-improving harness optimizes whatever signal it is given. Weng lists weak evaluators and reward hacking among the main bottlenecks: "if the reward comes from unit tests, the agent may overfit to tests"[^23]. Her suggestion fits the framework's boundaries well: the evaluator and permission control should sit outside the process that evolves the harness[^23]. In other words, verification and environment control are exactly the components a self-improving harness should *not* rewrite.
 
 #### Loop engineering
 
@@ -387,23 +395,23 @@ We picked ten open-source harnesses: some of the most popular ones, plus two SDK
 **Specialized harnesses** — built for one kind of work.
 
 - Coding:
-  - **Pi**[^23] — a deliberately minimal terminal coding agent that leaves a lot to user-authored extensions.
-  - **Claude Code Python**[^24] — a Python reimplementation of the Claude Code architecture (Not Anthropic's own Claude Code.)
-  - **Codex**[^25] — OpenAI's open-source coding agent.
-  - **OpenCode**[^26] — an interactive coding platform with terminal and desktop clients.
-  - **DeepSeek Harness**[^27] — a coding harness organized around capabilities and profiles.
+  - **Pi**[^24] — a deliberately minimal terminal coding agent that leaves a lot to user-authored extensions.
+  - **Claude Code Python**[^25] — a Python reimplementation of the Claude Code architecture (Not Anthropic's own Claude Code.)
+  - **Codex**[^26] — OpenAI's open-source coding agent.
+  - **OpenCode**[^27] — an interactive coding platform with terminal and desktop clients.
+  - **DeepSeek Harness**[^28] — a coding harness organized around capabilities and profiles.
 - Computer use:
-  - **OpenHands**[^28] — an open platform for agents that work inside a sandboxed computer: editing code, running commands, and browsing the web.
+  - **OpenHands**[^29] — an open platform for agents that work inside a sandboxed computer: editing code, running commands, and browsing the web.
 
 **Harness SDKs** — you build your own harness with them.
 
-- **Deep Agents**[^29] — LangChain's harness SDK.
-- **Cayu**[^30] — a harness SDK with a strong production runtime.
+- **Deep Agents**[^30] — LangChain's harness SDK.
+- **Cayu**[^31] — a harness SDK with a strong production runtime.
 
 **Personal assistants** — always-on harnesses/products you reach from many places.
 
-- **OpenClaw**[^31].
-- **Hermes Agent**[^32].
+- **OpenClaw**[^32].
+- **Hermes Agent**[^33].
 
 ### How we analyzed them
 
@@ -523,16 +531,16 @@ We split the scorecard into two groups — the **harness core** (chapter 3, only
 
 Three patterns stand out:
 
-- **Personal assistants have the most extensions.** OpenClaw fully matches all seven, Hermes six and it also ships adapters for around twenty messaging platforms, from Slack and WhatsApp to Signal and email[^32].
+- **Personal assistants have the most extensions.** OpenClaw fully matches all seven, Hermes six and it also ships adapters for around twenty messaging platforms, from Slack and WhatsApp to Signal and email[^33].
 - **Specialized harnesses aren't more focused on the core — they just have fewer extensions.** Personal assistants match the core at least as well as any coding harness.
 - **The core varies widely among coding harnesses.** Codex and DeepSeek Harness match four or five core checks, while Pi, Claude Code Python, and OpenCode match one or two.
 
 The exceptions are as interesting as the pattern:
 
-- **Codex** is a coding harness with the cleanest memory implementation in the whole set: rollout extraction, injection as developer instructions, and consolidation with usage-ranked pruning[^25].
-- **DeepSeek Harness** matches most of the core but no extensions at all. Its own stated substitute for memory: "the shared workspace is long-term memory"[^27].
-- **Deep Agents** is an SDK, yet it fully matches messaging and scheduled runs. Both come from an explicitly experimental interfaces component that ships WhatsApp, Telegram, and Discord adapters and a persistent cron scheduler[^29].
-- **OpenHands** fully matches a desktop app and scheduled runs — but about half of its checks are Partial. The analyzed repository only configures many capabilities; a separate Agent Server does the work — for example, it enforces the permissions set up in the UI[^28].
+- **Codex** is a coding harness with the cleanest memory implementation in the whole set: rollout extraction, injection as developer instructions, and consolidation with usage-ranked pruning[^26].
+- **DeepSeek Harness** matches most of the core but no extensions at all. Its own stated substitute for memory: "the shared workspace is long-term memory"[^28].
+- **Deep Agents** is an SDK, yet it fully matches messaging and scheduled runs. Both come from an explicitly experimental interfaces component that ships WhatsApp, Telegram, and Discord adapters and a persistent cron scheduler[^30].
+- **OpenHands** fully matches a desktop app and scheduled runs — but about half of its checks are Partial. The analyzed repository only configures many capabilities; a separate Agent Server does the work — for example, it enforces the permissions set up in the UI[^29].
 
 The pattern has more than one possible explanation:
 
@@ -561,15 +569,15 @@ The rest of the inference parameters look different:
 - **Sampling** (`temperature`, `top_k`, `top_p`) is mostly Partial. It is fully matched only in OpenCode and Cayu.
 - **Response control** (`response_format`, `stop`, `max_tokens`) is also mostly Partial. Only Cayu and OpenClaw fully match it.
 
-The parameters exist, but usually as provider pass-throughs: one is first-class, another hides in an adapter, and there is rarely a uniform surface for all of them. Some of that is deliberate. DeepSeek Harness documents dropping `top_k`, `top_p`, and `response_format` on purpose[^27], so a Partial here isn't always a missing feature.
+The parameters exist, but usually as provider pass-throughs: one is first-class, another hides in an adapter, and there is rarely a uniform surface for all of them. Some of that is deliberate. DeepSeek Harness documents dropping `top_k`, `top_p`, and `response_format` on purpose[^28], so a Partial here isn't always a missing feature.
 
 **Verdict:** **confirmed** for instructions; **qualified** for inference parameters. They belong in the Prompt layer, but in practice they are a thin, provider-dependent surface rather than a set of controls every harness exposes.
 
 #### Notes from the code
 
-**Structured output often lives in tool schemas, not in `response_format`.** In Hermes Agent, `response_format` exists but sits on the auxiliary/plugin path; the main turn loop is driven by tool calls[^32]. In DeepSeek Harness, typed output is available only through tool schemas and the subagent `outputSchema`[^27]. When the model mostly talks to the harness through tools, the tool schema *is* the response format.
+**Structured output often lives in tool schemas, not in `response_format`.** In Hermes Agent, `response_format` exists but sits on the auxiliary/plugin path; the main turn loop is driven by tool calls[^33]. In DeepSeek Harness, typed output is available only through tool schemas and the subagent `outputSchema`[^28]. When the model mostly talks to the harness through tools, the tool schema *is* the response format.
 
-**Prompts are built in stable and dynamic tiers.** Hermes assembles a tiered prompt[^32]; OpenClaw composes "stable/cacheable prompt regions"[^31]. Keep that in mind — it comes back when we get to prompt caching.
+**Prompts are built in stable and dynamic tiers.** Hermes assembles a tiered prompt[^33]; OpenClaw composes "stable/cacheable prompt regions"[^32]. Keep that in mind — it comes back when we get to prompt caching.
 
 ### Context
 
@@ -583,8 +591,8 @@ Dynamic composition and compaction are fully matched in all ten harnesses. Trimm
 
 **Offloading is real, but narrow.** It rarely shows up as a general primitive — "move any large output into a file and keep a reference". It shows up as specialized paths:
 
-- **Codex** has no general path for moving large tool results into files. Only a few specific things are saved to files: hook output, very long `/goal` objectives, and pasted text. Large tool output is simply truncated. And within a turn, the history is append-only on purpose, to maximize prompt-cache hits[^25] — a hint of what comes later in this chapter.
-- **Hermes** spills oversized tool output to files in a dedicated spillover cache[^32].
+- **Codex** has no general path for moving large tool results into files. Only a few specific things are saved to files: hook output, very long `/goal` objectives, and pasted text. Large tool output is simply truncated. And within a turn, the history is append-only on purpose, to maximize prompt-cache hits[^26] — a hint of what comes later in this chapter.
+- **Hermes** spills oversized tool output to files in a dedicated spillover cache[^33].
 - **OpenHands** doesn't match offloading at all in the analyzed repository.
 
 Cross-session memory also sits in the Context layer, but it's an extension, so we cover it with the other extensions below.
@@ -599,22 +607,22 @@ Cross-session memory also sits in the Context layer, but it's an extension, so w
 - **Tools, skills, and MCPs:** seven Matched, three Partial — the compound row from chapter 5, where one score has to cover three different things.
 - **Workflow config** (recursion limits, retry policy): mixed, fully matched in four.
 
-In chapter 3, we made our most contested choice — the agentic loop and orchestration belong to the LLM agent, not the harness — and promised a spoiler: the code backs it up. Here's the payoff. In every harness we analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^32]. No graph library appears anywhere in the repository.
+In chapter 3, we made our most contested choice — the agentic loop and orchestration belong to the LLM agent, not the harness — and promised a spoiler: the code backs it up. Here's the payoff. In every harness we analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33]. No graph library appears anywhere in the repository.
 
 **Verdict:** **confirmed.** The agentic loop and orchestration belong to the LLM agent.
 
 #### Notes from the code: dedicated planning and reflection agents are rare
 
-Multi-agent diagrams often show a fixed workflow: a Plan → Edit → Reflect graph, with a dedicated agent or node for each phase. In the examined harnesses, we didn't find one. Each of them runs a single agent loop[^26][^29][^31][^32].
+Multi-agent diagrams often show a fixed workflow: a Plan → Edit → Reflect graph, with a dedicated agent or node for each phase. In the examined harnesses, we didn't find one. Each of them runs a single agent loop[^27][^30][^32][^33].
 
 Sub-agents are a different story. Spawning them is common — seven harnesses fully match sub-agents, the other three partially. But a sub-agent is something the main agent calls when it decides it needs one, and it usually comes back with a summary. It is a tool call, not a node in a predetermined graph.
 
 Instead of workflow phases, we found planning and reflection directly in **modes** or **tools**.
 
-- **Hermes:** `/plan` and `/review` are user commands that apply for a single turn; planning is a prompt injection, review is a spawned subagent, and reflection is a post-turn background fork[^32].
-- **OpenCode:** Plan and Build are real, first-class modes the user switches between, with permission-aware tool gating rather than separate graph nodes[^26].
-- **OpenClaw:** workflow behavior lives inside "a staged ReAct loop rather than an explicit Plan/Edit/Review graph"[^31].
-- **Deep Agents:** `write_todos` is a tool for planning, `/goal` is a user command for iteration, and a rubric middleware handles reflection — all layered over a single loop[^29].
+- **Hermes:** `/plan` and `/review` are user commands that apply for a single turn; planning is a prompt injection, review is a spawned subagent, and reflection is a post-turn background fork[^33].
+- **OpenCode:** Plan and Build are real, first-class modes the user switches between, with permission-aware tool gating rather than separate graph nodes[^27].
+- **OpenClaw:** workflow behavior lives inside "a staged ReAct loop rather than an explicit Plan/Edit/Review graph"[^32].
+- **Deep Agents:** `write_todos` is a tool for planning, `/goal` is a user command for iteration, and a rubric middleware handles reflection — all layered over a single loop[^30].
 
 <!-- VISUAL TODO: a ReAct-style loop with a sub-agent spawn vs. a predetermined multi-node workflow (Plan → Edit → Reflect). -->
 
@@ -628,9 +636,9 @@ The personal assistants, OpenClaw and Hermes, go the other way, and the reason i
 
 <!-- TODO: verify in Hermes/OpenClaw code that the tools registry is explicitly kept unchanged during a session (summaries confirm byte-stable prompts/prefixes, not the registry itself). -->
 
-They aren't alone. OpenCode keeps immutable context-epoch baselines and stable byte prefixes[^26], Pi exposes `cacheRetention`[^23], and Deep Agents ships `_prompt_caching.py`[^29].
+They aren't alone. OpenCode keeps immutable context-epoch baselines and stable byte prefixes[^27], Pi exposes `cacheRetention`[^24], and Deep Agents ships `_prompt_caching.py`[^30].
 
-The strongest case is Hermes. There, caching doesn't just sit next to the framework — it shapes components the framework *does* cover[^32]:
+The strongest case is Hermes. There, caching doesn't just sit next to the framework — it shapes components the framework *does* cover[^33]:
 
 - memory is injected as a **frozen snapshot**, not updated mid-session;
 - `/goal` continuation is sent as a **plain user message**, so the system prompt never changes;
@@ -661,7 +669,7 @@ It helps to keep three things apart:
 2. **Runtime and lifecycle mechanics that allow another step** — limits, interruptions, hooks.
 3. **A true outer loop** — something that evaluates progress against a goal and restarts or modifies execution.
 
-The `/goal` loop, where it exists (six harnesses), is the closest thing to the third. But even there it doesn't replace the inner loop — it re-enters it. Hermes routes goal continuation as a plain user message through the normal input path[^32]. From the agent's point of view, the goal loop is just someone asking it to keep going.
+The `/goal` loop, where it exists (six harnesses), is the closest thing to the third. But even there it doesn't replace the inner loop — it re-enters it. Hermes routes goal continuation as a plain user message through the normal input path[^33]. From the agent's point of view, the goal loop is just someone asking it to keep going.
 
 **Takeaway:** this matches chapter 3 — the lifecycle defines *where* control applies, not *whether* to continue — and chapter 4, where the loop sits outside the harness.
 
@@ -671,14 +679,14 @@ Chapter 3 left an open question: is verification built into the lifecycle, offer
 
 For linters and unit tests, the answer is mostly: **a tool**. Only Cayu and Hermes fully match that check. In seven harnesses, it's Partial — the repository has lint and test entry points, and the agent can run them through the tool *when it decides to*.
 
-The closest thing to automatic behavior is OpenCode, whose edit tools surface LSP diagnostics right after an edit — but there is still no deterministic post-edit or pre-finish test gate[^26]. The real exceptions:
+The closest thing to automatic behavior is OpenCode, whose edit tools surface LSP diagnostics right after an edit — but there is still no deterministic post-edit or pre-finish test gate[^27]. The real exceptions:
 
-- **Hermes** infers build and test recipes per ecosystem and runs them through a verify runner, with verification acting as a **stop-gate policy**[^32].
-- **Cayu** has **completion verifiers** alongside named checks and test suites[^30].
+- **Hermes** infers build and test recipes per ecosystem and runs them through a verify runner, with verification acting as a **stop-gate policy**[^33].
+- **Cayu** has **completion verifiers** alongside named checks and test suites[^31].
 
-One surprise: an **LLM judge** is fully matched in six harnesses, while deterministic linters and tests are fully matched in only two. A model checking a model is more often a finished harness feature than a test suite is. In Deep Agents, it even acts as a gate: the rubric middleware runs a grader subagent that catches the agent's attempt to stop and sends back `satisfied`, `needs_revision`, or `failed`[^29].
+One surprise: an **LLM judge** is fully matched in six harnesses, while deterministic linters and tests are fully matched in only two. A model checking a model is more often a finished harness feature than a test suite is. In Deep Agents, it even acts as a gate: the rubric middleware runs a grader subagent that catches the agent's attempt to stop and sends back `satisfied`, `needs_revision`, or `failed`[^30].
 
-**Takeaway:** verification can be *available* — a tool the agent may invoke — or *enforced* — a gate the harness owns. The OpenClaw, Claude Code Python, and DeepSeek Harness analyses independently recommended scoring the two separately[^24][^27][^31].
+**Takeaway:** verification can be *available* — a tool the agent may invoke — or *enforced* — a gate the harness owns. The OpenClaw, Claude Code Python, and DeepSeek Harness analyses independently recommended scoring the two separately[^25][^28][^32].
 
 ### Extensions
 
@@ -807,34 +815,36 @@ Not every prompt, tool, loop, database, interface, and evaluation system is auto
 
 [^16]: Harrison Chase (LangChain), *When to Build Your Own Agent Harness*, YouTube, Aug 2026. [YouTube](https://youtu.be/HI2q3ci3Iuc). 
 
-[^17]: Michael Bolin (OpenAI), *Unrolling the Codex agent loop*, Jan 23, 2026. [OpenAI](https://openai.com/index/unrolling-the-codex-agent-loop/).
+[^17]: Caleb Writes Code, *Why harness is SO expensive*, YouTube, Aug 2026. [YouTube](https://www.youtube.com/watch?v=8ji5vURIllM).
 
-[^18]: MadPlay, *Beyond Prompts and Context: Harness Engineering for AI Agents*, Feb 15, 2026. [MadPlay](https://madplay.github.io/en/post/harness-engineering).
+[^18]: Michael Bolin (OpenAI), *Unrolling the Codex agent loop*, Jan 23, 2026. [OpenAI](https://openai.com/index/unrolling-the-codex-agent-loop/).
 
-[^19]: Caleb Writes Code, *Agent Harness explained in 8 min*, YouTube, May 2026. [YouTube](https://www.youtube.com/watch?v=1a1VXDdIyrk). 
+[^19]: MadPlay, *Beyond Prompts and Context: Harness Engineering for AI Agents*, Feb 15, 2026. [MadPlay](https://madplay.github.io/en/post/harness-engineering).
 
-[^20]: Sam Bhagwat (Mastra), *Every Harness Will Become a Claw*, AI Engineer, YouTube, Jul 2026. [YouTube](https://www.youtube.com/watch?v=8qWIPUia2O8). 
+[^20]: Caleb Writes Code, *Agent Harness explained in 8 min*, YouTube, May 2026. [YouTube](https://www.youtube.com/watch?v=1a1VXDdIyrk). 
 
-[^21]: Anthropic, *How Claude Code works in large codebases*, May 14, 2026. [Claude](https://claude.com/blog/how-claude-code-works-in-large-codebases-best-practices-and-where-to-start).
+[^21]: Sam Bhagwat (Mastra), *Every Harness Will Become a Claw*, AI Engineer, YouTube, Jul 2026. [YouTube](https://www.youtube.com/watch?v=8qWIPUia2O8). 
 
-[^22]: Lilian Weng, *Harness Engineering for Self-Improvement*, Jul 4, 2026. [Lilian Weng](https://lilianweng.github.io/posts/2026-07-04-harness/).
+[^22]: Anthropic, *How Claude Code works in large codebases*, May 14, 2026. [Claude](https://claude.com/blog/how-claude-code-works-in-large-codebases-best-practices-and-where-to-start).
 
-[^23]: Pi — [earendil-works/pi](https://github.com/earendil-works/pi), commit `4e69b0c28060f0f02fbe38bfa7c21a2e2eb25057`.
+[^23]: Lilian Weng, *Harness Engineering for Self-Improvement*, Jul 4, 2026. [Lilian Weng](https://lilianweng.github.io/posts/2026-07-04-harness/).
 
-[^24]: Claude Code Python (Claw Code Agent) — [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code), commit `167571da895b2a1a9e36ecfae2876984cef65e0d`.
+[^24]: Pi — [earendil-works/pi](https://github.com/earendil-works/pi), commit `4e69b0c28060f0f02fbe38bfa7c21a2e2eb25057`.
 
-[^25]: Codex — [openai/codex](https://github.com/openai/codex), commit `fdf23b4097bf19adf2286c64316da2d2a9fedae6`.
+[^25]: Claude Code Python (Claw Code Agent) — [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code), commit `167571da895b2a1a9e36ecfae2876984cef65e0d`.
 
-[^26]: OpenCode — [anomalyco/opencode](https://github.com/anomalyco/opencode), commit `8a6cf2c9aa1aa407129efc4e875a6ce6ab32ef72`.
+[^26]: Codex — [openai/codex](https://github.com/openai/codex), commit `fdf23b4097bf19adf2286c64316da2d2a9fedae6`.
 
-[^27]: DeepSeek Harness — [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness), commit `49a606bc5b5934603f22a26957a07dc799ab0291`.
+[^27]: OpenCode — [anomalyco/opencode](https://github.com/anomalyco/opencode), commit `8a6cf2c9aa1aa407129efc4e875a6ce6ab32ef72`.
 
-[^28]: OpenHands (Agent Canvas) — [OpenHands/openhands](https://github.com/OpenHands/openhands), commit `2c5ce2fa2dca3aa9c7442ff1c46876c60a794eeb`.
+[^28]: DeepSeek Harness — [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness), commit `49a606bc5b5934603f22a26957a07dc799ab0291`.
 
-[^29]: Deep Agents — [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents), commit `673844d06fe0ee186f2e492c3c0a19ec5facffc2`.
+[^29]: OpenHands (Agent Canvas) — [OpenHands/openhands](https://github.com/OpenHands/openhands), commit `2c5ce2fa2dca3aa9c7442ff1c46876c60a794eeb`.
 
-[^30]: Cayu — [cayu-dev/cayu](https://github.com/cayu-dev/cayu), commit `60ae68d6201f162fae1c1f4f65d03e0e31327607`.
+[^30]: Deep Agents — [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents), commit `673844d06fe0ee186f2e492c3c0a19ec5facffc2`.
 
-[^31]: OpenClaw — [openclaw/openclaw](https://github.com/openclaw/openclaw), commit `e4129b6375e3179be5d9ed0a56a35f2871f4e73b`.
+[^31]: Cayu — [cayu-dev/cayu](https://github.com/cayu-dev/cayu), commit `60ae68d6201f162fae1c1f4f65d03e0e31327607`.
 
-[^32]: Hermes Agent — [nousresearch/hermes-agent](https://github.com/nousresearch/hermes-agent), commit `63279301bcbdc185c1b07b98a9312eb0c862f26d`.
+[^32]: OpenClaw — [openclaw/openclaw](https://github.com/openclaw/openclaw), commit `e4129b6375e3179be5d9ed0a56a35f2871f4e73b`.
+
+[^33]: Hermes Agent — [nousresearch/hermes-agent](https://github.com/nousresearch/hermes-agent), commit `63279301bcbdc185c1b07b98a9312eb0c862f26d`.
