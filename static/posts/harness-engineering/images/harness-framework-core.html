@@ -162,18 +162,8 @@
     .track--harness{box-shadow:none;margin-top:0;margin-left:0;margin-right:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
 </style>
-<script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script>
-<style>
-  html.embedded body{padding:20px 16px 8px}
-  html.embedded .masthead{display:none}
-</style>
 </head>
 <body>
-
-<header class="masthead">
-  <h1>Agent system framework</h1>
-  <p>Four layers you design separately: what the model is told, what it can see, what it can do, and what surrounds it.</p>
-</header>
 
 <div class="board-scroll">
 
@@ -245,22 +235,5 @@
 </main>
 </div>
 
-<p class="footnote">Each coloured header is a layer; the boxes beneath it are that layer&rsquo;s components. Indented boxes are parts of the component directly above them. The harness core sits on its own raised panel: it is the layer this article is about.</p>
-
-<script>
-(function(){
-  if(window.self===window.top) return;
-  var last=0;
-  function post(){
-    var h=Math.ceil(document.documentElement.scrollHeight);
-    if(h!==last){ last=h; window.parent.postMessage({diagramHeight:h},'*'); }
-  }
-  window.addEventListener('load',post);
-  window.addEventListener('resize',post);
-  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(post);
-  if(window.ResizeObserver) new ResizeObserver(post).observe(document.body);
-  post();
-})();
-</script>
 </body>
 </html>

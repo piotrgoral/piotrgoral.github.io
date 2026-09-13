@@ -251,11 +251,6 @@
     .track--loop{box-shadow:none;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
 </style>
-<script>if(window.self!==window.top)document.documentElement.classList.add('embedded');</script>
-<style>
-  html.embedded body{padding:20px 16px 8px}
-  html.embedded .masthead{display:none}
-</style>
 </head>
 <body>
 
@@ -266,11 +261,6 @@
     <path d="M16.4 3.6a2.3 2.3 0 0 1 3.2 3.2L7.4 19 3 20.2l1.2-4.4z"/>
   </symbol>
 </svg>
-
-<header class="masthead">
-  <h1>Agent system framework</h1>
-  <p>Five layers you design separately: what the model is told, what it can see, what it can do, what surrounds it, and how people reach it.</p>
-</header>
 
 <div class="board-scroll">
 <main class="board">
@@ -415,11 +405,6 @@
   <li><span class="swatch swatch--loop"></span>Loop (runs outside the harness, fed by verification)</li>
 </ul>
 
-<div class="footnote">
-  <p>Each coloured header is a layer; the boxes beneath it are that layer&rsquo;s components. Indented boxes are parts of the component directly above them.</p>
-  <p>Blue boxes are extensions to the original framework: memory, verification by an LLM judge, the interfaces layer, and observability, which spans every layer. The orange Loop runs outside the harness; Verification feeds it, and each pass comes back to be verified again. The amber mark shows what the harness can rewrite between runs &mdash; instructions, memory, tools, workflow, and lifecycle hooks.</p>
-</div>
-
 <script>
 (function(){
   var track = document.querySelector('.harness-col');
@@ -464,20 +449,5 @@
 })();
 </script>
 
-<script>
-(function(){
-  if(window.self===window.top) return;
-  var last=0;
-  function post(){
-    var h=Math.ceil(document.documentElement.scrollHeight);
-    if(h!==last){ last=h; window.parent.postMessage({diagramHeight:h},'*'); }
-  }
-  window.addEventListener('load',post);
-  window.addEventListener('resize',post);
-  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(post);
-  if(window.ResizeObserver) new ResizeObserver(post).observe(document.body);
-  post();
-})();
-</script>
 </body>
 </html>
