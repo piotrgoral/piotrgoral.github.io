@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harness framework summary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECEEF1;
+    --card:#FFFFFF;
+    --ink:#161E29;
+    --ink-soft:#5C6875;
+    --hair:#D3D9E0;
+    --indent:26px;
+    --gap:14px;
+    --gutter:72px;
+    --islandpad:15px;
+    --boardw:680px;
+
+    --island:#EACCD5;
+    --island-hair:#C99AA8;
+
+    --harness:#96304A;
+    --new:#3E6DC4;
+    --new-wash:#EAF0FA;
+    --ext-island:#D6E2F5;
+    --ext-island-hair:#9DB6DE;
+    --loop:#C9761C;
+    --loop-wash:#FBF3E9;
+    --op-island:#F6E3CC;
+    --op-island-hair:#DDB07E;
+  }
+
+  *{box-sizing:border-box}
+
+  html{-webkit-text-size-adjust:100%;zoom:.85}
+
+  body{
+    margin:0;
+    padding:28px 24px 36px;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    font-weight:400;
+    line-height:1.45;
+  }
+
+  .board-scroll{overflow-x:auto;padding:4px 24px 8px;-webkit-overflow-scrolling:touch}
+
+  .board{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 2px minmax(0,1fr);
+    gap:0 calc(var(--gutter) / 2);
+    align-items:stretch;
+    min-width:var(--boardw);
+    max-width:900px;
+    margin:0 auto;
+    padding-bottom:30px;
+  }
+
+  .divider{background:#9AA5B1;width:2px;border-radius:1px}
+
+  .column__title{
+    margin:0 0 28px;
+    font-size:.8125rem;
+    font-weight:600;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+
+  .track{--tint:var(--ink)}
+  .track--harness{--tint:var(--harness)}
+  .track--ext{--tint:var(--new)}
+  .track--op{--tint:var(--loop)}
+
+  /* each block sits on its own raised, fully rounded ground */
+  .track--harness,
+  .track--ext,
+  .track--op{
+    position:relative;
+    padding:13px var(--islandpad) 22px;
+    border-radius:10px;
+  }
+  .track--harness{
+    background:var(--island);
+    border:1px solid var(--island-hair);
+    box-shadow:
+      0 1px 2px rgba(22,30,41,.05),
+      0 16px 32px -16px rgba(150,48,74,.38);
+  }
+  .track--ext{
+    background:var(--ext-island);
+    border:1px solid var(--ext-island-hair);
+    box-shadow:
+      0 1px 2px rgba(22,30,41,.05),
+      0 16px 32px -16px rgba(62,109,196,.38);
+  }
+  .track--op{
+    margin-top:28px;
+    background:var(--op-island);
+    border:1px solid var(--op-island-hair);
+    box-shadow:
+      0 1px 2px rgba(22,30,41,.05),
+      0 16px 32px -16px rgba(201,118,28,.38);
+  }
+  .track__head{font-size:1.1875rem}
+  .track--harness .branch--sub .card{background:#fff}
+
+  .track--ext .card,
+  .track--op .card{background:#fff}
+  .track--ext .card b{color:#23477F}
+  .track--op .card b{color:#7A4508}
+
+  .track__head{
+    position:relative;
+    margin:0;
+    padding:14px 16px 15px;
+    background:var(--tint);
+    color:#fff;
+    border-radius:2px;
+    font-size:1.125rem;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+
+  .branch{list-style:none;margin:0;padding:0}
+
+  .node{margin-top:var(--gap)}
+
+  .node__row{position:relative;padding-left:var(--indent)}
+  .node__row::before{           /* vertical rail */
+    content:"";position:absolute;left:0;top:calc(-1 * var(--gap));bottom:0;
+    width:1.5px;background:var(--tint);opacity:.55;
+  }
+  .branch > .node:last-child > .node__row::before{
+    bottom:auto;height:calc(var(--gap) + 50%);
+  }
+  .node__row::after{            /* horizontal tick */
+    content:"";position:absolute;left:0;top:50%;
+    width:var(--indent);height:1.5px;background:var(--tint);opacity:.55;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-left:3px solid var(--tint);
+    border-radius:4px;
+    padding:11px 13px;
+  }
+  .card b{display:block;font-weight:500;font-size:.9875rem;letter-spacing:-0.005em}
+  .card em{
+    display:block;margin-top:3px;
+    font-style:italic;font-weight:300;font-size:.8125rem;
+    color:var(--ink-soft);line-height:1.35;
+  }
+
+  .branch--sub{margin-left:calc(var(--indent) + 16px);position:relative}
+  /* keep the parent rail running down past a nested block to the next sibling */
+  .node:not(:last-child) > .branch--sub::before{
+    content:"";position:absolute;
+    left:calc(-1 * (var(--indent) + 16px));
+    top:calc(-1 * var(--gap));bottom:0;
+    width:1.5px;background:var(--tint);opacity:.55;
+  }
+  .branch--sub .card{background:#F7F8FA}
+  .branch--sub .card b{font-size:.9375rem}
+
+  @media (max-width:700px){
+    body{padding:36px 20px 48px}
+    :root{--gutter:40px;--indent:20px;--islandpad:11px;--boardw:600px}
+    .board{font-size:.9375rem}
+    .track__head{font-size:1rem;padding:12px 14px 13px}
+    .track--harness .track__head{font-size:1.0625rem}
+  }
+  @media print{
+    body{background:#fff;padding:0}
+    .track--harness{box-shadow:none;margin-top:0;margin-left:0;margin-right:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<div class="board-scroll">
+
+<main class="board">
+
+  <!-- FROM 0-1: HARNESS CORE -->
+  <div class="column">
+    <h3 class="column__title">Framework from 0-1</h3>
+    <section class="track track--harness">
+      <h2 class="track__head">Harness core</h2>
+      <ul class="branch">
+        <li class="node">
+          <div class="node__row"><div class="card"><b>Environment</b></div></div>
+          <ul class="branch branch--sub">
+            <li class="node"><div class="node__row"><div class="card"><b>Observations</b><em>reading files, terminal, logs</em></div></div></li>
+            <li class="node"><div class="node__row"><div class="card"><b>Control</b><em>permissions, approvals</em></div></div></li>
+            <li class="node"><div class="node__row"><div class="card"><b>Runtime</b><em>isolation</em></div></div></li>
+          </ul>
+        </li>
+        <li class="node"><div class="node__row"><div class="card"><b>Turn lifecycle</b><em>hooks for: step, turn, session</em></div></div></li>
+        <li class="node"><div class="node__row"><div class="card"><b>Verification</b><em>examples: linters, unit tests</em></div></div></li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="divider" aria-hidden="true"></div>
+
+  <!-- EXTENSIONS -->
+  <div class="column">
+    <h3 class="column__title">Extensions</h3>
+    <section class="track track--ext">
+      <h2 class="track__head">Extending the framework</h2>
+      <ul class="branch">
+        <li class="node"><div class="node__row"><div class="card"><b>Cross-session memory</b></div></div></li>
+        <li class="node"><div class="node__row"><div class="card"><b>Observability</b></div></div></li>
+        <li class="node"><div class="node__row"><div class="card"><b>Interfaces</b></div></div></li>
+      </ul>
+    </section>
+    <section class="track track--op">
+      <h2 class="track__head">Operating on the framework</h2>
+      <ul class="branch">
+        <li class="node"><div class="node__row"><div class="card"><b>Self-improving harness</b></div></div></li>
+        <li class="node"><div class="node__row"><div class="card"><b>Loop</b></div></div></li>
+      </ul>
+    </section>
+  </div>
+
+</main>
+</div>
+
+<script>
+/* Report rendered height so the embedding page can size the iframe */
+(function(){
+  if(window.parent===window) return;
+  function report(){
+    var h=Math.ceil(document.body.getBoundingClientRect().height);
+    window.parent.postMessage({diagramHeight:h},'*');
+  }
+  window.addEventListener('load',report);
+  window.addEventListener('resize',report);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(report);
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+})();
+</script>
+
+</body>
+</html>
