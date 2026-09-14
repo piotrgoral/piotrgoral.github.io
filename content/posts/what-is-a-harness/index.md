@@ -13,7 +13,11 @@ UseHugoToc: true
 
 ## In short
 
-This article builds a framework that defines what a Harness is and where its boundaries lie, based on existing definitions. The framework separates the layers of an agent system: prompt, context, LLM agent, and Harness. Within the Harness, it defines a core of three parts: environment, turn lifecycle, and verification. Beyond that core, the framework can be extended with cross-session memory, interfaces, and observability. Additionally, a self-improving harness and the loop can operate on the framework. The framework is then validated against existing harness implementations (coding agents, harness SDKs, and personal assistants) by analyzing their code.
+As an AI engineer who builds agents and uses harnesses every day, I got tired of the chaos around the word "harness". Everyone defines it differently, so it's hard to know what belongs where, how to compare them, or where to start building your own.
+
+So I put all the definitions side by side and worked out what each source actually means (chapter 2). Then I proposed my own framework: prompt, context, LLM agent, and a deliberately narrow harness to core: environment, turn lifecycle, and verification (chapter 3). Once that core is in place, the framework can be extended with cross-session memory, interfaces, and observability (chapter 4).
+
+Nice on paper, but does it survive real code? To find out, I dug into ten real harnesses: coding agents, harness SDKs, and personal assistants. Spoiler alert: it holds up. The evidence is in chapters 5 and 6. The key takeaways, and what you can do with them, are in chapter 7.
 
 {{< diagram src="images/harness-framework-summary.html" height="560" title="Harness framework summary" caption="The harness core built from 0 to 1, alongside the extensions that extend the framework and the approaches that operate on it." >}}
 
