@@ -22,7 +22,7 @@ Finally, I analyzed ten actual harness implementations—coding agents, harness 
 
 {{< diagram src="images/harness-framework-summary.html" height="560" title="Harness framework summary" caption="The harness core built from 0 to 1, alongside the extensions that extend the framework and the approaches that operate on it." >}}
 
-## 1. Why the harness layer needs a clearer definition
+## 1. Why the harness needs a definition
 
 ### Why the term is confusing
 
@@ -34,7 +34,7 @@ That third reaction is worth taking seriously. When you read about harnesses, a 
 
 Fair point. Most of the components aren't new. What's new is treating the way they fit together as a system you can deliberately design, compare, and improve. The open question is which components belong to the harness — and where the harness ends.
 
-### Why harnesses matter
+### Same model, different results
 
 If "harness" were only a new label for old things, it could be ignored. But changing the harness can materially change what the same model achieves.
 
@@ -55,7 +55,7 @@ The survey *Agent Harness for Large Language Model Agents* collects several stud
 
 These results come from different benchmarks and setups, so they aren't directly comparable. But together they show that the harness isn't a neutral implementation detail — and that it's worth being precise about what belongs inside it.
 
-### Why now
+### How the term went mainstream
 
 Let's quickly look back at how we got here:
 
@@ -100,7 +100,7 @@ What you get by the end:
 
 Before defining the harness, I need to separate what existing sources agree on from the boundaries they're still arguing about.
 
-## 2. What existing sources mean by "harness"
+## 2. What the sources mean by "harness"
 
 ### Level 1: the whole system (Agent = Model + Harness)
 
@@ -126,7 +126,7 @@ So the same word points at both the whole and one of its parts. To avoid that tr
 - **LLM agent:** an LLM equipped with tools and operating through an agentic loop.
 - **Agent:** the full combination, potentially including interfaces and product-level capabilities.
 
-### Level 2: the layers stack
+### Level 2: a stack of layers
 
 One level lower, sources place the harness after components that are already familiar:
 
@@ -147,7 +147,7 @@ One level lower, sources place the harness after components that are already fam
 
 Several sources present a version of this progression. MadPlay moves from prompt and context engineering to designing the agent's whole environment[^19]. *Agent Harness Engineering: A Survey* describes the same move as a progression from single-call optimization to multi-step context optimization and then system-level optimization[^4]. Caleb Writes Code calls harness engineering "one layer above context engineering"[^20], while YC Paper Club describes the harness as the layer between the LLM and the world[^11]. The agent step is named by the sources that approach the boundary from the other side: Sam Bhagwat lays out an agentic spectrum of LLM → agent → harness, where the move from agent to harness is what adds durability and persistence[^21], and Tejas Kumar answers the obvious objection head-on — "Isn't a harness just the agent loop? No, it's the stuff around the agent loop"[^8].
 
-### Level 3: components by dimension
+### Level 3: component by component
 
 At the most detailed level, descriptions like "the system around the model" are not enough. The differences appear when we ask which components each source includes and whether its definition covers a single session or work that continues across multiple sessions.
 
@@ -199,7 +199,7 @@ Two groups stand out.
 
 These definitions give us a shared core, but not a stable boundary. Resolving that boundary requires an explicit framework — precise enough to examine in actual harness implementations, and open enough for those implementations to challenge it.
 
-## 3. A layered framework for agent systems
+## 3. A layered framework
 
 ### How the framework is built
 
@@ -413,7 +413,7 @@ So far, the framework is built from definitions — what sources say a harness i
 
 Real harnesses weren't built to fit proposed framework. Coding agents, personal assistants, and SDKs for building harnesses each solve a different problem. In the next chapter, I open their code and see how well the framework holds.
 
-## 5. Mapping real harnesses onto the framework
+## 5. Mapping real harnesses
 
 ### Analyzed harnesses
 
