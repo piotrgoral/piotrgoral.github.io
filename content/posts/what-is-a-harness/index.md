@@ -1,5 +1,5 @@
 ---
-title: "What is a Harness"
+title: "I Studied 10 Harnesses. Here’s What I Found."
 date: 2026-09-13
 slug: what-is-a-harness
 readingTime: 32
