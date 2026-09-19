@@ -74,7 +74,7 @@ And if you search for harnesses, two of the first articles you'll find are actua
 
 Mitchell Hashimoto describes it as a step in his own AI adoption journey: "anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again"[^13]. OpenAI's *Harness engineering* post describes a team that shipped an internal product with "0 lines of manually-written code", a constraint they "intentionally chose"[^3]. Both share the same lesson: limit what you do by hand, and use every agent failure to improve the harness.
 
-That is a harness engineering lesson, and a good one. But this article asks a different question: **what is the harness, and how does it show up in real implementations?** It may help you build a custom harness, but it is not a guide to harness engineering.
+That is a harness engineering lesson, and a good one. In this article, I want to focus on a different question: **what is the harness itself, and how does it show up in real implementations?** The answer may help you build a custom harness, but this is not a guide to harness engineering.
 
 ### What this article asks, and what you get
 
