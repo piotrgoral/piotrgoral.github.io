@@ -383,7 +383,7 @@ These signals describe how the system as a whole is doing. OpenAI's harness engi
 
 This article is about the harness, so the self-improving harness gets only its outline here; the details are for future articles.
 
-Lilian Weng, in her blogpost on self-improvement, describes harness engineering as closer to runtime and system design: "how the model observes, acts, memorizes, checks itself, and improves"[^23]. Improvement is right there on the list. In my framework, self-improvement is not a component at the same level as memory or interfaces. It is a **feedback mechanism over components**:
+In her blogpost on self-improvement, Lilian Weng describes harness engineering as closer to runtime and system design: "how the model observes, acts, memorizes, checks itself, and improves"[^23]. Improvement is right there on the list. In my framework, self-improvement is not a component at the same level as memory or interfaces. It is a **feedback mechanism over components**:
 
 1. **Observe** execution and outcomes — using environment and observability.
 2. **Verify** — tests, linters, or an LLM as a judge.
@@ -453,10 +453,7 @@ But systematically, not vibes-based:
 5. **Other.** Capabilities outside the framework were listed separately, under *Other*.
 6. **Majority vote, one scorecard.** Ratings were merged per item into a single scorecard. Where models disagreed — or, with two models, tied — the item usually ended up as Partial.
 
-One limitation is built into the analysis. Giving models the framework makes their results comparable across models and harnesses, but it also grounds them in its categories — and they may miss what falls outside them. Two things push back against that bias:
-
-- **The *Other* section** gave every model a place to report what didn't fit.
-- **Disagreement between models** pointed to where the problem could be the rubric itself, not the code: framework parts that bundle several things together — like tools, skills, and MCPs — were hard to rate with a single score.
+One limitation is built into the analysis. Giving models the framework makes their results comparable across models and harnesses, but it also grounds them in its categories — and they may miss what falls outside them. Two things push back against that bias. The *Other* section gave every model a place to report what didn't fit. And disagreement between models pointed to where the problem could be the rubric itself, not the code: framework parts that bundle several things together — like tools, skills, and MCPs — were hard to rate with a single score.
 
 ### Framework scorecard
 
