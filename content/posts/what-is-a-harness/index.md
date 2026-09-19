@@ -119,7 +119,7 @@ LangChain's *The Anatomy of an Agent Harness* puts it most bluntly: "A harness i
 
 The formula is useful, but it hides an ambiguity. In "Agent = Model + Harness", *agent* means the complete system — often a whole product like Claude Code or Codex. Yet many of the same sources also use *agent* for something much smaller: the loop that calls the model and executes tools. Mitchell Hashimoto defines an agent as "an LLM that can chat and invoke external behavior in a loop"[^13]. OpenAI calls the Codex harness the thing that "provides the core agent loop"[^18]. And *From Question Answering to Task Completion* explicitly warns that "two abstraction levels are often conflated in the agent literature"[^5].
 
-So the same word points at both the whole and one of its parts. To avoid that trap, the rest of this article uses three terms:
+So the same word points at both the whole and one of its parts. To avoid that trap, I use three terms for the rest of this article:
 
 - **Model:** the raw LLM that performs inference.
 - **LLM agent:** an LLM equipped with tools and operating through an agentic loop.
@@ -217,15 +217,19 @@ Steps two and three depend on historical ownership, but history does not always 
 
 > The LLM agent determines **which action to take next**. The Harness supervises **that action's interaction with the environment**.
 
-Chapter 2 left six dimensions contested. Ownership and the tie-breaker settle three of them inside the core of the framework:
+Chapter 2 left six dimensions contested. Three of them are needed within a single session, so they belong in the core.
 
-- **Agent loop & Orchestration → LLM agent.** Agent frameworks owned them first, and they decide which action comes next.
-- **Verification → Harness.** It checks the agent's effect on the environment. Whether it is implemented as a hook or a tool is left to the harnesses implementation analysis in later chapters.
+**Inside the core:**
 
-The remaining three fall outside the core, for different reasons:
+- **Agent loop → LLM agent.** Agent frameworks owned it first, and by the tie-breaker the loop is exactly what decides which action comes next.
+- **Orchestration and sub-agents → LLM agent.** The same reasoning: delegating to a sub-agent is a decision about what to do next, not about how an action meets the environment.
+- **Verification → Harness.** No earlier layer owned it, and by the tie-breaker it belongs to the harness: it checks the agent's effect on the environment.
 
-- **Cross-session memory → beyond the core.** It connects sessions; the core covers single session.
-- **Interfaces & Observability → above the core.** When building a harness from scratch, they come after the core is in place.
+**Outside the core:**
+
+- **Cross-session memory.** It covers multiple sessions; within a single one, the Context layer is enough.
+- **Interfaces.** When building a harness from scratch, they come after the core is in place.
+- **Observability and governance.** They monitor and constrain runs that already work.
 
 I return to these three when the framework expands in chapter 4.
 
