@@ -13,11 +13,11 @@ UseHugoToc: true
 
 ## In short
 
-As an AI engineer who builds agents and uses harnesses every day, I got tired of the chaos around the word "harness". Everyone defines it differently, so it's hard to know what belongs where, how to compare them, or where to start building your own.
+I hear the word "harness" several times a day, and it seems to mean something different each time. After a while, it gets overwhelming. What belongs where? How do you compare harnesses? And where do you start if you want to build one?
 
-So I put all the definitions side by side and worked out what each source actually means (chapter 2). Then I proposed my own framework: prompt, context, LLM agent, and a deliberately narrow harness to core: environment, turn lifecycle, and verification (chapter 3). Once that core is in place, the framework can be extended with cross-session memory, interfaces, and observability (chapter 4).
+So I went through research papers, blog posts, books, and podcasts to understand how each source defines a harness (chapter 2). Then I proposed my own framework: prompt, context, LLM agent, and a deliberately narrow harness core: environment, turn lifecycle, and verification (chapter 3). Once that core is in place, the framework can be extended with cross-session memory, interfaces, and observability (chapter 4).
 
-Nice on paper, but does it survive real code? To find out, I dug into ten real harnesses: coding agents, harness SDKs, and personal assistants. Spoiler alert: it holds up. The evidence is in chapters 5 and 6. The key takeaways, and what you can do with them, are in chapter 7.
+Finally, I analyzed ten actual harness implementations—coding agents, harness SDKs, and personal assistants—to see whether the framework makes sense in practice. Spoiler alert: it does. The evidence is in chapters 5 and 6. The key takeaways, and what you can do with them, are in chapter 7.
 
 {{< diagram src="images/harness-framework-summary.html" height="560" title="Harness framework summary" caption="The harness core built from 0 to 1, alongside the extensions that extend the framework and the approaches that operate on it." >}}
 
