@@ -29,13 +29,13 @@ Ask two people what a harness is and you'll get three different answers.
 
 One person means the loop that keeps calling the model until the task is done. Another means everything around the model: tools, memory, sandboxes, hooks, evals, and the Slack integration too. The third answer is usually "it's basically context engineering, but with a new name".
 
-That third reaction is worth taking seriously. When you read about harnesses, a lot of it sounds familiar. Context management? We had that before. Tools? Function calling has been around for years. Sandboxes, permissions, retries, tests? That's just software engineering.
+That third reaction is worth taking seriously. When you read about harnesses, a lot of it sounds familiar. Context management? That existed before. Tools? Function calling has been around for years. Sandboxes, permissions, retries, tests? That's just software engineering.
 
 Fair point. Most of the components aren't new. What's new is treating the way they fit together as a system you can deliberately design, compare, and improve. The open question is which components belong to the harness — and where the harness ends.
 
 ### Why harnesses matter
 
-If "harness" were only a new label for old things, we could ignore it. But changing the harness can materially change what the same model achieves.
+If "harness" were only a new label for old things, it could be ignored. But changing the harness can materially change what the same model achieves.
 
 The survey *Agent Harness for Large Language Model Agents* collects several studies where the harness changed and the model didn't[^1]:
 
@@ -52,7 +52,7 @@ The survey *Agent Harness for Large Language Model Agents* collects several stud
 
 </div>
 
-These results come from different benchmarks and setups, so they aren't directly comparable. But together they show that the harness isn't a neutral implementation detail — and that we need to be precise about what belongs inside it.
+These results come from different benchmarks and setups, so they aren't directly comparable. But together they show that the harness isn't a neutral implementation detail — and that it's worth being precise about what belongs inside it.
 
 ### Why now
 
@@ -67,7 +67,7 @@ Let's quickly look back at how we got here:
 
 One distinction before we go further, because the two terms are often used interchangeably:
 
-- **Harness:** the layer we examine in this article.
+- **Harness:** the layer examined in this article.
 - **Harness engineering:** the practice of designing, constraining, evaluating, and improving that layer, and in practice all the layers around it.
 
 And if you search for harnesses, two of the first articles you'll find are actually about harness engineering.
@@ -97,7 +97,7 @@ What you get by the end:
 - **A comparison** of real implementations (coding agents, harness SDKs, personal assistants) using the same framework.
 - **Findings and a revised definition** tested against real codebases.
 
-Before defining the harness, we need to separate what existing sources agree on from the boundaries they're still arguing about.
+Before defining the harness, I need to separate what existing sources agree on from the boundaries they're still arguing about.
 
 ## 2. What existing sources mean by "harness"
 
@@ -207,13 +207,13 @@ The goal of the framework is simple: clearly defined components. When you build 
 
 At its core, the framework focuses on **a single session**. That's where building a custom harness starts. This starting point goes back to the Anthropic article that introduced the term *harness* for long-running agents: each coding session is tasked with "making incremental progress" and leaving the environment "in a clean state" for the next one[^2]. Whatever carries over between sessions is only as good as what is handled within one.
 
-We build the framework by following the progression from chapter 2 — **Prompt → Context → LLM agent → Harness** — in three steps:
+I build the framework by following the progression from chapter 2 — **Prompt → Context → LLM agent → Harness** — in three steps:
 
 1. **Start from the known layers.** Prompt, context, and LLM agent each come with a practice that existed before anyone talked about harnesses.
-2. **Assign by historical ownership.** A component belongs to the *earliest* layer whose practice already handled it. Familiar components keep their familiar names. Context management? Yes, we had that before — so it stays in context.
-3. **Define the Harness's responsibilities.** Once the established layers keep what they already owned, we ask what the system must add to support an agent working on long-running tasks in the environment. The answer forms the Harness core.
+2. **Assign by historical ownership.** A component belongs to the *earliest* layer whose practice already handled it. Familiar components keep their familiar names. Context management? Yes, that existed before — so it stays in context.
+3. **Define the Harness's responsibilities.** Once the established layers keep what they already owned, I ask what the system must add to support an agent working on long-running tasks in the environment. The answer forms the Harness core.
 
-Steps two and three depend on historical ownership, but history does not always draw a clear boundary. When a component could plausibly belong to either the LLM agent or the Harness, we use a tie-breaker:
+Steps two and three depend on historical ownership, but history does not always draw a clear boundary. When a component could plausibly belong to either the LLM agent or the Harness, I use a tie-breaker:
 
 > The LLM agent determines **which action to take next**. The Harness supervises **that action's interaction with the environment**.
 
@@ -227,7 +227,7 @@ The remaining three fall outside the core, for different reasons:
 - **Cross-session memory → beyond the core.** It connects sessions; the core covers single session.
 - **Interfaces & Observability → above the core.** When building a harness from scratch, they come after the core is in place.
 
-We return to these three when the framework expands in chapter 4.
+I return to these three when the framework expands in chapter 4.
 
 The result is a deliberately **narrow** harness core: environment interactions, lifecycle control, and verification. That contrasts with the broad definitions from chapter 2, where the harness is "every piece of code, configuration, and execution logic that isn't the model itself"[^14].
 
@@ -301,7 +301,7 @@ It has three components.
 
 One point matters more than it first seems: an LLM agent's real output is often a change in the environment. OpenAI puts it directly when describing Codex: "the primary output of a software agent is the code it writes or edits on your machine"[^18]. The final assistant message — "I added the architecture.md you asked for" — only reports the result. The actual result is modified code, new files, deployed infrastructure, or another change in environment state.
 
-That's why we describe the harness through state transitions and observable effects, not only through model messages.
+That's why I describe the harness through state transitions and observable effects, not only through model messages.
 
 #### Turn lifecycle
 
@@ -324,7 +324,7 @@ This single-session core is the starting point, not the entire harness. Because 
 
 Suppose the single-session harness from chapter 3 is doing its job. The LLM agent can work reliably on a long-running task in the environment within one session. It sees the right context, picks sensible actions, the environment executes them safely, and verification tells it whether they worked.
 
-Now we can add what chapter 3 deliberately left out, without blurring the boundaries we just drew. First, the three contested dimensions left outside the core — **cross-session memory**, **interfaces**, and **observability** — which *extend* the framework. Then two newer buzzwords — the **self-improving harness** and **loop engineering** — which don't add another box but *operate on* the framework.
+Now I can add what chapter 3 deliberately left out, without blurring the boundaries I just drew. First, the three contested dimensions left outside the core — **cross-session memory**, **interfaces**, and **observability** — which *extend* the framework. Then two newer buzzwords — the **self-improving harness** and **loop engineering** — which don't add another box but *operate on* the framework.
 
 ### The expanded framework
 
@@ -355,7 +355,7 @@ Interfaces describe how people or systems reach the agent:
 
 Interfaces are **above the core**. When you build a harness from scratch, you don't start with a WhatsApp integration — you start with an agent that works in the environment. Interfaces come after the core is in place. That matches what chapter 2 found: interfaces were mentioned almost only by practitioners describing agentic products.
 
-Which leaves a boundary question we won't settle here: is this layer an extension of the harness, or part of the product shell around it? A scheduled run changes *when* the agent works; a Slack integration changes *who* can ask it to. Neither changes how an action interacts with the environment. We keep this question open for the code analysis.
+Which leaves a boundary question I won't settle here: is this layer an extension of the harness, or part of the product shell around it? A scheduled run changes *when* the agent works; a Slack integration changes *who* can ask it to. Neither changes how an action interacts with the environment. I keep this question open for the code analysis.
 
 #### Observability
 
@@ -379,7 +379,7 @@ These signals describe how the system as a whole is doing. OpenAI's harness engi
 
 This article is about the harness, so the self-improving harness gets only its outline here; the details are for future articles.
 
-In her blogpost on self-improvement, Lilian Weng describes harness engineering as closer to runtime and system design: "how the model observes, acts, memorizes, checks itself, and improves"[^23]. Improvement is right there on the list. In our framework, self-improvement is not a component at the same level as memory or interfaces. It is a **feedback mechanism over components**:
+In her blogpost on self-improvement, Lilian Weng describes harness engineering as closer to runtime and system design: "how the model observes, acts, memorizes, checks itself, and improves"[^23]. Improvement is right there on the list. In my framework, self-improvement is not a component at the same level as memory or interfaces. It is a **feedback mechanism over components**:
 
 1. **Observe** execution and outcomes — using environment and observability.
 2. **Verify** — tests, linters, or an LLM as a judge.
@@ -392,7 +392,7 @@ One caution: a self-improving harness optimizes whatever signal it is given. Wen
 
 #### Loop engineering
 
-Here we treat it as an adjacent engineering practice, not a harness component.
+Here I treat it as an adjacent engineering practice, not a harness component.
 
 Nicole Koenigstein draws the line using the same idea chapter 3 used to build the framework — ownership: "The distinction ultimately comes down to ownership"[^12]. When you use Codex or Claude Code, the harness already exists. You can still engineer an outer loop that invokes the coding agent, evaluates the result, adds feedback, and invokes it again until a condition is met. In her words, you are "engineering a loop around a harness you consume rather than changing the underlying harness itself"[^12].
 
@@ -403,15 +403,15 @@ Don't confuse it with the agentic loop from chapter 3. The LLM agent's loop pick
 
 ### From framework to real harnesses
 
-So far, the framework is built from definitions — what sources say a harness is, and where we chose to draw the boundaries. That makes it a hypothesis about real systems, not a description of them — useful only if it can describe them, and if they can expose where it is wrong or incomplete.
+So far, the framework is built from definitions — what sources say a harness is, and where I chose to draw the boundaries. That makes it a hypothesis about real systems, not a description of them — useful only if it can describe them, and if they can expose where it is wrong or incomplete.
 
-Real harnesses weren't built to fit proposed framework. Coding agents, personal assistants, and SDKs for building harnesses each solve a different problem. In the next chapter, we open their code and see how well the framework holds.
+Real harnesses weren't built to fit proposed framework. Coding agents, personal assistants, and SDKs for building harnesses each solve a different problem. In the next chapter, I open their code and see how well the framework holds.
 
 ## 5. Mapping real harnesses onto the framework
 
 ### Analyzed harnesses
 
-We picked ten open-source harnesses: some of the most popular ones, plus two SDKs for building harnesses. They fall into three groups.
+I picked ten open-source harnesses: some of the most popular ones, plus two SDKs for building harnesses. They fall into three groups.
 
 **Specialized harnesses** — built for one kind of work.
 
@@ -434,7 +434,7 @@ We picked ten open-source harnesses: some of the most popular ones, plus two SDK
 - **OpenClaw**[^32].
 - **Hermes Agent**[^33].
 
-### How we analyzed them
+### How I analyzed them
 
 Of course, using LLMs. Ten repositories are far too much code to read by hand.
 
@@ -535,7 +535,7 @@ After careful considerations, these aren't gaps in the framework. They are imple
 
 Before looking at what the scorecard means for each layer of the framework, let's step back and look at high-level patterns across the harnesses themselves.
 
-We split the scorecard into two groups — the **harness core** (chapter 3, only harness core layer) and the **extensions** from chapter 4 — and counted how many checks each harness fully matches in each.
+I split the scorecard into two groups — the **harness core** (chapter 3, only harness core layer) and the **extensions** from chapter 4 — and counted how many checks each harness fully matches in each.
 
 | Harness | Type | Harness Core (of 6) | Extensions (of 7) |
 |---|---|:--:|:--:|
@@ -577,7 +577,7 @@ The scorecard shows what exists; the next step is to test each boundary of the f
 Let's go layer by layer through the framework: **Prompt → Context → LLM agent → Harness core → Extensions**. Each layer gets the same two parts.
 
 1. **Framework check.** The claim from chapter 3 or 4, the scorecard evidence, the exceptions, and a verdict: **confirmed**, **qualified**, **moved**, or **added**.
-2. **Notes from the code.** Specific things we noticed in the implementations that challenge common beliefs about harness components.
+2. **Notes from the code.** Specific things I noticed in the implementations that challenge common beliefs about harness components.
 
 ### Layer 1: Prompt
 
@@ -606,7 +606,7 @@ The parameters exist, but usually as provider pass-throughs: one is first-class,
 
 Dynamic composition and compaction are fully matched in all ten harnesses. Trimming is matched in eight (Pi and OpenHands are Partial), offloading in six.
 
-**Verdict:** **confirmed.** Context is the cleanest layer of the framework: the components are present, recognizable, and implemented under names close to the ones we used.
+**Verdict:** **confirmed.** Context is the cleanest layer of the framework: the components are present, recognizable, and implemented under names close to the ones I used.
 
 #### Notes from the code: offloading is real, but narrow
 
@@ -616,7 +616,7 @@ Dynamic composition and compaction are fully matched in all ten harnesses. Trimm
 - **Hermes** spills oversized tool output to files in a dedicated spillover cache[^33].
 - **OpenHands** doesn't match offloading at all in the analyzed repository.
 
-Cross-session memory also sits in the Context layer, but it's an extension, so we cover it with the other extensions below.
+Cross-session memory also sits in the Context layer, but it's an extension, so I cover it with the other extensions below.
 
 ### Layer 3: LLM agent
 
@@ -628,17 +628,17 @@ Cross-session memory also sits in the Context layer, but it's an extension, so w
 - **Tools, skills, and MCPs:** seven Matched, three Partial — the compound row from chapter 5, where one score has to cover three different things.
 - **Workflow config** (recursion limits, retry policy): mixed, fully matched in four.
 
-In chapter 3, we made our most contested choice — the agentic loop and orchestration belong to the LLM agent, not the harness — and promised a spoiler: the code backs it up. Here's the payoff. In every harness we analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33]. No graph library appears anywhere in the repository.
+In chapter 3, I made my most contested choice — the agentic loop and orchestration belong to the LLM agent, not the harness — and promised a spoiler: the code backs it up. Here's the payoff. In every harness I analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33]. No graph library appears anywhere in the repository.
 
 **Verdict:** **confirmed.** The agentic loop and orchestration belong to the LLM agent.
 
 #### Notes from the code: dedicated planning and reflection agents are rare
 
-Multi-agent diagrams often show a fixed workflow: a Plan → Edit → Reflect graph, with a dedicated agent or node for each phase. In the examined harnesses, we didn't find one. Each of them runs a single agent loop[^27][^30][^32][^33].
+Multi-agent diagrams often show a fixed workflow: a Plan → Edit → Reflect graph, with a dedicated agent or node for each phase. In the examined harnesses, I didn't find one. Each of them runs a single agent loop[^27][^30][^32][^33].
 
 Sub-agents are a different story. Spawning them is common — seven harnesses fully match sub-agents, the other three partially. But a sub-agent is something the main agent calls when it decides it needs one, and it usually comes back with a summary. It is a tool call, not a node in a predetermined graph.
 
-Instead of workflow phases, we found planning and reflection directly in **modes** or **tools**.
+Instead of workflow phases, I found planning and reflection directly in **modes** or **tools**.
 
 - **Hermes:** `/plan` and `/review` are user commands that apply for a single turn; planning is a prompt injection, review is a spawned subagent, and reflection is a post-turn background fork[^33].
 - **OpenCode:** Plan and Build are real, first-class modes the user switches between, with permission-aware tool gating rather than separate graph nodes[^27].
@@ -680,7 +680,7 @@ The strongest case is Hermes. There, caching doesn't just sit next to the framew
 
 #### Notes from the code: no separate outer harness loop
 
-One could expect the harness to run its own loop around the agent: checking progress, deciding to go on. We didn't find that.
+One could expect the harness to run its own loop around the agent: checking progress, deciding to go on. I didn't find that.
 
 The inner agent loop receives updated context — tool results, observations, hook output — and decides whether to keep using tools. Lifecycle hooks are control points around a step, a turn, or a session. They can block, modify, or add information. They are not a second decision loop.
 
@@ -725,7 +725,7 @@ Interfaces follow the same logic, only more so: TUI/CLI is common, and everythin
 
 #### Observability
 
-Observability wasn't part of the analysis. It is usually built *on top of* harnesses — dashboards, tracing, monitoring stacks around a running system — so it isn't something you can reliably read from the harness code itself. We leave it where chapter 4 put it: above the core, cutting across all layers.
+Observability wasn't part of the analysis. It is usually built *on top of* harnesses — dashboards, tracing, monitoring stacks around a running system — so it isn't something you can reliably read from the harness code itself. I leave it where chapter 4 put it: above the core, cutting across all layers.
 
 ### Verdicts by component
 
@@ -750,19 +750,19 @@ The notes from the code don't move the boundaries, but they do sharpen the chapt
 
 ## 7. Conclusion
 
-We started with a simple observation: the same model can do very different work depending on what surrounds it — from a single edit-tool format change taking Grok Code Fast 1 from 6.7% to 68.3% on SWE-bench, to harness choice alone accounting for 31% of performance variance in AgencyBench. If the system around the model matters that much, we should be able to say what that system is — and where it ends.
+I started with a simple observation: the same model can do very different work depending on what surrounds it — from a single edit-tool format change taking Grok Code Fast 1 from 6.7% to 68.3% on SWE-bench, to harness choice alone accounting for 31% of performance variance in AgencyBench. If the system around the model matters that much, we should be able to say what that system is — and where it ends.
 
-So, what is the harness layer? After building a framework from the sources and testing it against ten codebases, our answer is:
+So, what is the harness layer? After building a framework from the sources and testing it against ten codebases, my answer is:
 
 > Within a single session, the harness core controls an agent loop's access to its environment, exposes lifecycle control points, and makes verification available — optionally enforcing it. The decision to continue stays with the agent loop.
 
-The most important boundary in that definition is the last sentence. The **LLM agent** decides *what to do next* and *whether to keep going*. The **harness core** defines *where control can be applied*: which actions reach the environment, where hooks can block or add information, and what the agent can use to check its work. In chapter 3, we called putting the agentic loop in the LLM agent our most contested choice. The code backed it up.
+The most important boundary in that definition is the last sentence. The **LLM agent** decides *what to do next* and *whether to keep going*. The **harness core** defines *where control can be applied*: which actions reach the environment, where hooks can block or add information, and what the agent can use to check its work. In chapter 3, I called putting the agentic loop in the LLM agent my most contested choice. The code backed it up.
 
 ### What the code showed
 
 Three findings stood out, because each one runs against a common picture of how harnesses work:
 
-- **One agent loop, not a planning and reflection graph.** None of the harnesses we analyzed runs a fixed Plan → Edit → Reflect workflow with a dedicated agent per phase. Planning and reflection show up as modes the user switches on or tools the agent calls. Sub-agents are common, but they're spawned on demand and return a summary — a tool call, not a node in a graph.
+- **One agent loop, not a planning and reflection graph.** None of the harnesses I analyzed runs a fixed Plan → Edit → Reflect workflow with a dedicated agent per phase. Planning and reflection show up as modes the user switches on or tools the agent calls. Sub-agents are common, but they're spawned on demand and return a summary — a tool call, not a node in a graph.
 - **Cross-session memory follows the product's shape.** Personal assistants, which people talk to for weeks and from many places, have the most complete memory. Most coding harnesses have little of it. The exceptions prove the point: Codex, a coding harness, has the full memory triad, while DeepSeek Harness has none by choice. Memory is a product decision, not a primitive every harness core needs.
 - **No separate outer harness loop.** The agent loop decides whether to continue. Lifecycle hooks can block, modify, or add information, but they aren't a second decision-maker. Even the `/goal` loop, where it exists, goes back into the same inner loop — from the agent's point of view, it's just someone asking it to keep going.
 
