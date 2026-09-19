@@ -232,6 +232,8 @@ Chapter 2 left six dimensions contested. Three of them are needed within a singl
 
 I return to these three when the framework expands in chapter 4.
 
+### A narrow harness core
+
 The result is a deliberately **narrow** harness core: environment interactions, lifecycle control, and verification. That contrasts with the broad definitions from chapter 2, where the harness is "every piece of code, configuration, and execution logic that isn't the model itself"[^14].
 
 {{< diagram src="images/harness-framework-core.html" height="820" title="Agent system framework" caption="Four layers you design separately: what the model is told, what it can see, what it can do, and what surrounds it. The harness core sits on its own raised panel." >}}
@@ -284,7 +286,7 @@ This is where the framework makes its most contested choice: **the agentic loop 
 
 Not every source agrees. *Agent Harness Engineering: A Survey* (ETCLOVG) puts lifecycle and orchestration inside the harness[^4]. *Agent Harness for Large Language Model Agents: A Survey* (ETCSLV) goes further and makes the execution loop a necessary condition: "A system must implement at minimum E and T to qualify as a harness"[^1].
 
-The placement follows both history and function. Agentic loops, tools, and workflow control were designed and named as parts of agent frameworks before anyone called them harness features. Functionally, they determine which action comes next and how actions are sequenced. The harness supervises each action's interaction with the environment. The boundary is contested, but it gives each layer a distinct job instead of assigning the same control logic to both. Later chapters apply the framework to actual implementations to test this boundary and the framework's other assignments. Spoiler alert: the code backs it up.
+The placement follows both history and function. Agentic loops, tools, and workflow control were designed and named as parts of agent frameworks before anyone called them harness features. Functionally, they determine which action comes next and how actions are sequenced. The harness supervises each action's interaction with the environment. The boundary is contested, but it gives each layer a distinct job instead of assigning the same control logic to both. Later chapters apply the framework to actual implementations to test this boundary and the framework's other assignments.
 
 The rule for this layer: the LLM agent decides **what action to take next**.
 
@@ -549,17 +551,19 @@ Then, notes from the code: specific things I noticed in the implementations that
 
 ### Does the framework hold?
 
+**Legend:** <span class="verdict verdict--confirmed">confirmed</span> · <span class="verdict verdict--qualified">qualified</span> · <span class="verdict verdict--moved">moved</span> · <span class="verdict verdict--added">added</span> · <span class="verdict verdict--na">not analyzed</span>
+
 | Layer | Framework check | Verdict |
 |---|---|:--|
-| **Prompt** | • **Instructions** — matched in all 10, the one universal component<br>• **Inference parameters** — reasoning control matched in 9, but sampling fully matched only in OpenCode and Cayu, response control only in Cayu and OpenClaw | confirmed for instructions<br>**qualified** for inference parameters |
-| **Context** | • **Composition and compaction** — matched in all 10<br>• **Trimming** — 8; **offloading** — 6<br>• The cleanest layer: components present, recognizable, and named close to the ones used in the framework | confirmed |
-| **LLM agent** | • **State** — matched in all 10; **workflow control** — 9; **sub-agents** and **tools** — 7 each<br>• **Agentic loop** — lives in agent code in all 10, with no graph library in any repository | confirmed |
-| **Harness core** | • **Environment** — observations matched in 9, permissions in 8, runtime isolation in 7<br>• **Turn lifecycle** — hooks present everywhere in some form<br>• **Verification** — at least partial everywhere, but linters and tests fully matched only in Cayu and Hermes | confirmed |
-| **Extensions** | • **Memory** — depends on the product: personal assistants have the most complete memory, coding harnesses are mostly Partial or Not matched<br>• **Interfaces** — TUI/CLI common, the rest vary; they answer the question chapter 4 left open by leaning toward the product shell, since a harness works the same from a terminal or from WhatsApp<br>• **Observability** — dashboards and tracing are built *on top of* harnesses, so they can't be read from harness code | confirmed as extensions<br>observability not analyzed |
+| **Prompt** | • **Instructions** — matched in all 10, the one universal component<br>• **Inference parameters** — reasoning control matched in 9, but sampling fully matched only in OpenCode and Cayu, response control only in Cayu and OpenClaw | <span class="verdict verdict--confirmed">confirmed</span> for instructions<br><span class="verdict verdict--qualified">qualified</span> for inference parameters |
+| **Context** | • **Composition and compaction** — matched in all 10<br>• **Trimming** — 8; **offloading** — 6<br>• The cleanest layer: components present, recognizable, and named close to the ones used in the framework | <span class="verdict verdict--confirmed">confirmed</span> |
+| **LLM agent** | • **State** — matched in all 10; **workflow control** — 9; **sub-agents** and **tools** — 7 each<br>• **Agentic loop** — lives in agent code in all 10, with no dedicated Plan/Edit/Review graph nodes in any of them | <span class="verdict verdict--confirmed">confirmed</span> |
+| **Harness core** | • **Environment** — observations matched in 9, permissions in 8, runtime isolation in 7<br>• **Turn lifecycle** — hooks present everywhere in some form<br>• **Verification** — at least partial everywhere, but linters and tests fully matched only in Cayu and Hermes | <span class="verdict verdict--confirmed">confirmed</span> for environment and lifecycle<br><span class="verdict verdict--qualified">qualified</span> for verification |
+| **Extensions** | • **Memory** — depends on the product: personal assistants have the most complete memory, coding harnesses are mostly Partial or Not matched<br>• **Interfaces** — TUI/CLI common, the rest vary; they answer the question chapter 4 left open by leaning toward the product shell, since a harness works the same from a terminal or from WhatsApp<br>• **Observability** — dashboards and tracing are built *on top of* harnesses, so they can't be read from harness code | <span class="verdict verdict--confirmed">confirmed</span><br><span class="verdict verdict--na">not analyzed</span> for observability |
 
 **The framework held up. No boundary moved, and nothing had to be added.**
 
-**The framework's most contested choice was the agentic loop.** Chapter 3 placed the loop and orchestration in the LLM agent, not the harness. The code supports that placement: in every harness I analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33]. No graph library appears anywhere in the repository.
+The framework's most contested choice was the agentic loop. Chapter 3 placed the loop and orchestration in the LLM agent, not the harness. The code supports that placement: in every harness I analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33]. No graph library appears anywhere in the Hermes repository.
 
 ### Notes from the code
 
@@ -680,7 +684,7 @@ Mario Zechner built Pi as a minimal core with "so many hook points" that users c
 
 That's where a clear definition matters. Self-modifying software needs to know *what* it's allowed to change: an instruction, a tool, a hook. And, as chapter 4 argued, it needs to know what it must *not* change — the verification that judges its work and the environment controls that limit it. That's a promise, not a finding from this analysis, and a topic for the next articles.
 
-Not every prompt, tool, loop, database, interface, and evaluation system is automatically "the harness". The term is useful because it draws a boundary — and because it lets us say so when practice crosses it.
+Not every prompt, tool, loop, database, interface, and evaluation system is automatically "the harness". They all matter, but calling them by the same name hides the distinction. The framework tells you which layer each one belongs to.
 
 ---
 
