@@ -542,69 +542,29 @@ The scorecard also has a part that doesn't fit into a table: everything the mode
 
 After careful considerations, these aren't gaps in the framework. They are implementation-specific extensions, and which ones a harness needs depends on its use case.
 
-The scorecard shows what exists; the next step is to test each boundary of the framework against it — which ones hold, which need qualifying, and which should move.
-
 ## 6. Validating the framework
 
-Let's go layer by layer through the framework: **Prompt → Context → LLM agent → Harness core → Extensions**. Each layer gets the same two parts.
+The scorecard shows what exists; the next step is to test each boundary of the framework against it — which ones hold, which need qualifying, and which should move.
 
-1. **Framework check.** The claim from chapter 3 or 4, the scorecard evidence, the exceptions, and a verdict: **confirmed**, **qualified**, **moved**, or **added**.
-2. **Notes from the code.** Specific things I noticed in the implementations that challenge common beliefs about harness components.
+Then, notes from the code: specific things I noticed in the implementations that challenge common beliefs about harness components.
 
-### Layer 1: Prompt
+### Does the framework hold?
 
-#### Framework check
+| Layer | Framework check | Verdict |
+|---|---|:--|
+| **Prompt** | • **Instructions** — matched in all 10, the one universal component<br>• **Inference parameters** — reasoning control matched in 9, but sampling fully matched only in OpenCode and Cayu, response control only in Cayu and OpenClaw | confirmed for instructions<br>**qualified** for inference parameters |
+| **Context** | • **Composition and compaction** — matched in all 10<br>• **Trimming** — 8; **offloading** — 6<br>• The cleanest layer: components present, recognizable, and named close to the ones used in the framework | confirmed |
+| **LLM agent** | • **State** — matched in all 10; **workflow control** — 9; **sub-agents** and **tools** — 7 each<br>• **Agentic loop** — lives in agent code in all 10, with no graph library in any repository | confirmed |
+| **Harness core** | • **Environment** — observations matched in 9, permissions in 8, runtime isolation in 7<br>• **Turn lifecycle** — hooks present everywhere in some form<br>• **Verification** — at least partial everywhere, but linters and tests fully matched only in Cayu and Hermes | confirmed |
+| **Extensions** | • **Memory** — depends on the product: personal assistants have the most complete memory, coding harnesses are mostly Partial or Not matched<br>• **Interfaces** — TUI/CLI common, the rest vary; they answer the question chapter 4 left open by leaning toward the product shell, since a harness works the same from a terminal or from WhatsApp<br>• **Observability** — dashboards and tracing are built *on top of* harnesses, so they can't be read from harness code | confirmed as extensions<br>observability not analyzed |
 
-Instructions are the one thing every harness has: fully matched in all ten. Reasoning control is close behind, matched in nine (Claude Code Python is the only exception).
+**The framework held up. No boundary moved, and nothing had to be added.**
 
-The rest of the inference parameters look different:
+**The framework's most contested choice was the agentic loop.** Chapter 3 placed the loop and orchestration in the LLM agent, not the harness. The code supports that placement: in every harness I analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33]. No graph library appears anywhere in the repository.
 
-- **Sampling** (`temperature`, `top_k`, `top_p`) is mostly Partial. It is fully matched only in OpenCode and Cayu.
-- **Response control** (`response_format`, `stop`, `max_tokens`) is also mostly Partial. Only Cayu and OpenClaw fully match it.
+### Notes from the code
 
-The parameters exist, but usually as provider pass-throughs: one is first-class, another hides in an adapter, and there is rarely a uniform surface for all of them. Some of that is deliberate. DeepSeek Harness documents dropping `top_k`, `top_p`, and `response_format` on purpose[^28], so a Partial here isn't always a missing feature.
-
-**Verdict:** **confirmed** for instructions; **qualified** for inference parameters. They belong in the Prompt layer, but in practice they are a thin, provider-dependent surface rather than a set of controls every harness exposes.
-
-#### Notes from the code: tool schemas and prompt tiers
-
-**Structured output often lives in tool schemas, not in `response_format`.** In Hermes Agent, `response_format` exists but sits on the auxiliary/plugin path; the main turn loop is driven by tool calls[^33]. In DeepSeek Harness, typed output is available only through tool schemas and the subagent `outputSchema`[^28]. When the model mostly talks to the harness through tools, the tool schema *is* the response format.
-
-**Prompts are built in stable and dynamic tiers.** Hermes assembles a tiered prompt[^33]; OpenClaw composes "stable/cacheable prompt regions"[^32]. Keep that in mind — it comes back when we get to prompt caching.
-
-### Layer 2: Context
-
-#### Framework check
-
-Dynamic composition and compaction are fully matched in all ten harnesses. Trimming is matched in eight (Pi and OpenHands are Partial), offloading in six.
-
-**Verdict:** **confirmed.** Context is the cleanest layer of the framework: the components are present, recognizable, and implemented under names close to the ones I used.
-
-#### Notes from the code: offloading is real, but narrow
-
-**Offloading is real, but narrow.** It rarely shows up as a general primitive — "move any large output into a file and keep a reference". It shows up as specialized paths:
-
-- **Codex** has no general path for moving large tool results into files. Only a few specific things are saved to files: hook output, very long `/goal` objectives, and pasted text. Large tool output is simply truncated. And within a turn, the history is append-only on purpose, to maximize prompt-cache hits[^26] — a hint of what comes later in this chapter.
-- **Hermes** spills oversized tool output to files in a dedicated spillover cache[^33].
-- **OpenHands** doesn't match offloading at all in the analyzed repository.
-
-Cross-session memory also sits in the Context layer, but it's an extension, so I cover it with the other extensions below.
-
-### Layer 3: LLM agent
-
-#### Framework check
-
-- **State:** fully matched in all ten.
-- **Workflow control** (interruption, resume): nine.
-- **Sub-agents:** seven Matched, three Partial.
-- **Tools, skills, and MCPs:** seven Matched, three Partial — the compound row from chapter 5, where one score has to cover three different things.
-- **Workflow config** (recursion limits, retry policy): mixed, fully matched in four.
-
-In chapter 3, I made my most contested choice — the agentic loop and orchestration belong to the LLM agent, not the harness — and promised a spoiler: the code backs it up. Here's the payoff. In every harness I analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33]. No graph library appears anywhere in the repository.
-
-**Verdict:** **confirmed.** The agentic loop and orchestration belong to the LLM agent.
-
-#### Notes from the code: dedicated planning and reflection agents are rare
+#### 1. Dedicated planning and reflection agents are rare
 
 Multi-agent diagrams often show a fixed workflow: a Plan → Edit → Reflect graph, with a dedicated agent or node for each phase. In the examined harnesses, I didn't find one. Each of them runs a single agent loop[^27][^30][^32][^33].
 
@@ -621,7 +581,7 @@ Instead of workflow phases, I found planning and reflection directly in **modes*
 
 **Takeaway:** in practice, planning and reflection are modes or tools around a single agent loop — switched on by the user or called by the agent — not dedicated agents in a fixed graph.
 
-#### Notes from the code: prompt caching and a stable tools registry
+#### 2. Prompt caching and a stable tools registry
 
 The literature makes a dynamic tool registry look like the natural design. The *Agent Harness for Large Language Model Agents* survey lists registry patterns where tools are registered at runtime, scoped per task, or retrieved by semantic search at each step[^1]. A tool set that changes during a session reads like the advanced option.
 
@@ -640,17 +600,7 @@ The strongest case is Hermes. There, caching doesn't just sit next to the framew
 
 **Takeaway:** prompt caching is an operational constraint that cuts across layers.
 
-### Layer 4: Harness core
-
-#### Framework check
-
-- **Environment:** observations (files, terminal, logs) fully matched in nine (OpenCode is Partial), permissions and approvals in eight (Pi and OpenHands are Partial), runtime isolation in seven.
-- **Turn lifecycle hooks:** six Matched, four Partial — present in some form everywhere.
-- **Verification:** linters and unit tests mostly Partial; LLM as a judge fully matched in six.
-
-**Verdict:** **confirmed** for all three components. Every harness controls how the agent reaches its environment. Lifecycle hooks are always there, even when not all three levels — step, turn, session — are exposed. And every harness has at least a partial form of verification — even if, as the notes below show, it rarely looks the way chapter 3 first sketched it.
-
-#### Notes from the code: no separate outer harness loop
+#### 3. No separate outer harness loop
 
 One could expect the harness to run its own loop around the agent: checking progress, deciding to go on. I didn't find that.
 
@@ -666,7 +616,7 @@ The `/goal` loop, where it exists (six harnesses), is the closest thing to the t
 
 **Takeaway:** this matches chapter 3 — the lifecycle defines *where* control applies, not *whether* to continue — and chapter 4, where the loop sits outside the harness.
 
-#### Notes from the code: verification is often a tool, not an automatic hook
+#### 4. Verification is often a tool, not an automatic hook
 
 Chapter 3 left an open question: is verification built into the lifecycle, offered to the agent as a tool, delegated to an external evaluator, or absent?
 
@@ -680,47 +630,6 @@ The closest thing to automatic behavior is OpenCode, whose edit tools surface LS
 One surprise: an **LLM judge** is fully matched in six harnesses, while deterministic linters and tests are fully matched in only two. A model checking a model is more often a finished harness feature than a test suite is. In Deep Agents, it even acts as a gate: the rubric middleware runs a grader subagent that catches the agent's attempt to stop and sends back `satisfied`, `needs_revision`, or `failed`[^30].
 
 **Takeaway:** verification can be *available* — a tool the agent may invoke — or *enforced* — a gate the harness owns. The OpenClaw, Claude Code Python, and DeepSeek Harness analyses independently recommended scoring the two separately[^25][^28][^32].
-
-### Extensions
-
-#### Cross-session memory
-
-The personal assistants lead: OpenClaw fully matches encoding, retrieval, and consolidation; Hermes matches encoding and retrieval, with consolidation Partial. Coding harnesses are mostly Not matched or Partial.
-
-The two exceptions sharpen the point rather than break it. **Codex** is a coding harness with the cleanest memory implementation in the whole set: rollout extraction, injection as developer instructions, and consolidation with usage-ranked pruning[^26]. **DeepSeek Harness** has none of the three, by choice — its own stated substitute is that "the shared workspace is long-term memory"[^28].
-
-**Verdict:** **confirmed** as an extension. Memory depends on how long and from where people interact with the agent — not a primitive every harness core needs.
-
-#### Interfaces
-
-Interfaces follow the same logic, only more so: TUI/CLI is common, and everything else comes and goes with the product.
-
-**Verdict:** **confirmed** above the core. As for the question chapter 4 left open — harness extension or product shell? — the evidence leans toward the product shell. A harness works the same whether the request comes from a terminal or from WhatsApp.
-
-#### Observability
-
-Observability wasn't part of the analysis. It is usually built *on top of* harnesses — dashboards, tracing, monitoring stacks around a running system — so it isn't something you can reliably read from the harness code itself. I leave it where chapter 4 put it: above the core, cutting across all layers.
-
-### Verdicts by component
-
-**Legend:** <span class="verdict verdict--confirmed">confirmed</span> · <span class="verdict verdict--qualified">qualified</span> · <span class="verdict verdict--moved">moved</span> · <span class="verdict verdict--added">added</span> · <span class="verdict verdict--na">not analyzed</span>
-
-| Layer | Component | Verdict |
-|---|---|---|
-| Prompt | Instructions | <span class="verdict verdict--confirmed">confirmed</span> |
-| Prompt | Inference parameters | <span class="verdict verdict--qualified">qualified</span> |
-| Context | Composition, compaction, trimming, offloading | <span class="verdict verdict--confirmed">confirmed</span> |
-| LLM agent | Tools, state, workflow; agentic loop and orchestration | <span class="verdict verdict--confirmed">confirmed</span> |
-| Harness core | Environment | <span class="verdict verdict--confirmed">confirmed</span> |
-| Harness core | Turn lifecycle | <span class="verdict verdict--confirmed">confirmed</span> |
-| Harness core | Verification | <span class="verdict verdict--confirmed">confirmed</span> |
-| Extension | Cross-session memory | <span class="verdict verdict--confirmed">confirmed</span> |
-| Extension | Interfaces | <span class="verdict verdict--confirmed">confirmed</span> |
-| Extension | Observability | <span class="verdict verdict--na">not analyzed</span> |
-
-The framework held up. **No boundary moved**, and nothing had to be added. The only qualification is inference parameters, which are real but thin and provider-dependent.
-
-The notes from the code don't move the boundaries, but they do sharpen the chapter 3 definition. There, the harness core "governs the turn lifecycle, and provides verification". The code is more modest: verification is mostly available rather than enforced, and no harness runs a second loop that decides whether to continue.
 
 ## 7. Conclusion
 
