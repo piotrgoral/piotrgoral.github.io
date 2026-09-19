@@ -18,8 +18,6 @@
     --base:#7A8593;      /* everything that already existed */
     --new:#3E6DC4;       /* added in this revision */
     --new-wash:#EAF0FA;
-    --loop:#C9761C;      /* the self-improving loop */
-    --loop-wash:#FBF3E9;
 
     --indent:26px;
     --gap:14px;
@@ -27,8 +25,8 @@
     --islandpad:26px;
     --boardw:1220px;
 
-    --island:#FCF7F1;
-    --island-hair:#E7D6BE;
+    --island:#F4F6F8;
+    --island-hair:#D3D9E0;
   }
 
   *{box-sizing:border-box}
@@ -64,8 +62,7 @@
   .swatch{width:22px;height:12px;border-radius:2px;flex:none}
   .swatch--base{background:var(--base)}
   .swatch--new{background:var(--new)}
-  .swatch--loop{background:var(--loop)}
-  .legend .loopmark{position:static;width:15px;height:15px}
+  .legend .loopmark{position:static;width:17px;height:17px;padding:0;background:none;color:var(--new)}
 
   .board-scroll{overflow-x:auto;padding:0 4px 30px 0;-webkit-overflow-scrolling:touch}
 
@@ -80,7 +77,7 @@
   /* --tint drives rails and card rules; --head drives the header block */
   .track{--tint:var(--base);--head:var(--base)}
   .track--new{--tint:var(--new);--head:var(--new)}
-  .track--loop{--tint:var(--base);--head:var(--loop)}
+  .track--loop{--tint:var(--base);--head:var(--new)}
 
   .track__head{
     display:flex;align-items:center;gap:10px;
@@ -94,7 +91,6 @@
     letter-spacing:0.01em;
   }
   .track__head em{font-style:normal;font-weight:400;opacity:.85}
-  .track__head .headmark{margin-left:auto;width:18px;height:18px;color:#fff;flex:none}
 
   .branch{list-style:none;margin:0;padding:0}
   .node{margin-top:var(--gap)}
@@ -155,22 +151,26 @@
     border-radius:10px;
     box-shadow:
       0 1px 2px rgba(22,30,41,.05),
-      0 16px 32px -16px rgba(201,118,28,.40);
+      0 16px 32px -16px rgba(22,30,41,.28);
   }
-  .track--loop .branch--sub .card:not(.card--new):not(.card--target){background:#fff}
+  .track--loop .branch--sub .card{background:#fff}
   .harness-col{position:relative}
   #cycle{
     position:absolute;inset:0;width:100%;height:100%;
     overflow:visible;pointer-events:none;z-index:2;
   }
-  #cycle path.line{fill:none;stroke:var(--loop);stroke-width:1.75px}
+  #cycle path.line{fill:none;stroke:var(--new);stroke-width:1.75px}
 
   /* the loop runs outside the harness and is fed by verification */
-  .loop-out{margin-top:34px;padding-left:calc(var(--indent) + 16px)}
+  .loop-out{
+    margin-top:64px;
+    width:90%;
+    margin-left:calc(55% + var(--gutter) / 2);
+  }
   .card--loop{
-    background:var(--loop);
-    border-color:var(--loop);
-    border-left-color:#9A5812;
+    background:var(--new);
+    border-color:var(--new);
+    border-left-color:#2C5099;
   }
   .card--loop b{color:#fff}
   .card--loop em{color:rgba(255,255,255,.86)}
@@ -192,20 +192,18 @@
   .board__top .track__head{display:inline-flex;margin-bottom:8px}
 
   /* rewritten by the loop */
-  .card--target{
-    border-color:#E5CBA6;
-    border-left-color:var(--loop);
-    background:var(--loop-wash);
-  }
-  .card--target b{color:#8A4E0C;padding-right:22px}
+  .card--target b{padding-right:32px}
   .loopmark{
-    position:absolute;top:11px;right:11px;
-    width:15px;height:15px;color:var(--loop);
+    position:absolute;top:9px;right:9px;
+    width:25px;height:25px;
+    background:var(--new);border-radius:4px;
+    color:#fff;
   }
 
   /* marked, but not amber-washed: keeps its own fill */
-  .card--marked b{padding-right:22px}
-  .card--solid .loopmark{color:#F8CD91}
+  .card--marked b{padding-right:32px}
+  /* on a solid card the badge would vanish: tint the glyph instead */
+  .card--solid .loopmark{background:none;padding:0;width:18px;height:18px;color:#C6D6EF;top:10px;right:10px}
 
   .branch--sub{margin-left:calc(var(--indent) + 16px);position:relative}
   .node:not(:last-child) > .branch--sub::before{
@@ -216,7 +214,6 @@
   }
   .branch--sub .card{background:#F7F8FA}
   .branch--sub .card--new{background:var(--new-wash)}
-  .branch--sub .card--target{background:var(--loop-wash)}
   .branch--sub .card b{font-size:.9375rem}
 
   .card--solid{
@@ -257,7 +254,6 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="loopmark" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M11.5 20.5H21"/>
     <path d="M16.4 3.6a2.3 2.3 0 0 1 3.2 3.2L7.4 19 3 20.2l1.2-4.4z"/>
   </symbol>
 </svg>
@@ -278,7 +274,7 @@
       <li class="node">
         <div class="node__row">
           <div class="card card--target">
-            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <svg class="loopmark" viewBox="0.2 1 22.6 22.6" aria-hidden="true"><use href="#loopmark"/></svg>
             <b>Instructions</b>
           </div>
         </div>
@@ -305,7 +301,7 @@
       <li class="node">
         <div class="node__row">
           <div class="card card--new card--solid card--marked">
-            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <svg class="loopmark" viewBox="0.2 1 22.6 22.6" aria-hidden="true"><use href="#loopmark"/></svg>
             <b>Memory (cross-session)</b><em>encoding, retrieval, consolidation</em>
           </div>
         </div>
@@ -320,7 +316,7 @@
       <li class="node">
         <div class="node__row">
           <div class="card card--target">
-            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <svg class="loopmark" viewBox="0.2 1 22.6 22.6" aria-hidden="true"><use href="#loopmark"/></svg>
             <b>Tools</b><em>including: skills, MCPs</em>
           </div>
         </div>
@@ -329,7 +325,7 @@
       <li class="node">
         <div class="node__row">
           <div class="card card--target">
-            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
+            <svg class="loopmark" viewBox="0.2 1 22.6 22.6" aria-hidden="true"><use href="#loopmark"/></svg>
             <b>Workflow</b>
           </div>
         </div>
@@ -347,12 +343,12 @@
   <svg id="cycle" aria-hidden="true">
     <defs>
       <marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-        <path d="M0 0.6L7.4 4 0 7.4z" fill="#C9761C"/>
+        <path d="M0 0.6L7.4 4 0 7.4z" fill="#3E6DC4"/>
       </marker>
     </defs>
   </svg>
   <section class="track track--loop">
-    <h2 class="track__head">Self-improving harness<svg class="headmark" aria-hidden="true"><use href="#loopmark"/></svg></h2>
+    <h2 class="track__head">Self-improving harness</h2>
     <ul class="branch">
       <li class="node">
         <div class="node__row"><div class="card"><b>Environment</b></div></div>
@@ -365,8 +361,8 @@
       <li class="node">
         <div class="node__row">
           <div class="card card--target">
-            <svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>
-            <b>Turn lifecycle</b><em class="inline-add">hooks for: step, turn, <span class="add">session</span></em>
+            <svg class="loopmark" viewBox="0.2 1 22.6 22.6" aria-hidden="true"><use href="#loopmark"/></svg>
+            <b>Turn lifecycle</b><em class="inline-add">hooks for: step, turn, session</em>
           </div>
         </div>
       </li>
@@ -400,9 +396,8 @@
 </div>
 
 <ul class="legend">
-  <li><svg class="loopmark" aria-hidden="true"><use href="#loopmark"/></svg>Editable by the self-improving harness</li>
+  <li><svg class="loopmark" viewBox="1 1.8 21 21" aria-hidden="true"><use href="#loopmark"/></svg>Editable by the self-improving harness</li>
   <li><span class="swatch swatch--new"></span>Extensions</li>
-  <li><span class="swatch swatch--loop"></span>Loop (runs outside the harness, fed by verification)</li>
 </ul>
 
 <script>
@@ -426,13 +421,14 @@
     svg.setAttribute('viewBox','0 0 '+W+' '+H);
 
     var v = box('verification'), l = box('loop');
-    var y  = v.b - 14;                        /* both sides: below where the tree rail ends */
-    var ll = v.l - 13;                        /* left lane, between rail and card */
-    var rl = v.r + 13;                        /* right lane, inside the panel margin */
+    var w  = l.r - l.l;
+    var y  = v.b - 14;                        /* below where the tree rail ends */
+    var vcx = (v.l + v.r) / 2;                /* down lane: out of verification's bottom */
+    var xb = l.l + w * 0.68;                  /* up lane: back into verification */
 
     [
-      'M'+v.l+' '+y+'H'+ll+'V'+l.cy+'H'+(l.l-1),   /* verification -> loop, on the left */
-      'M'+l.r+' '+l.cy+'H'+rl+'V'+y+'H'+(v.r+1)    /* loop -> verification, on the right */
+      'M'+vcx+' '+v.b+'V'+l.cy+'H'+(l.l-1),        /* verification -> loop, out of the bottom */
+      'M'+xb+' '+l.t+'V'+y+'H'+(v.r+1)             /* loop -> verification, back on the right */
     ].forEach(function(d){
       var p = document.createElementNS(NS,'path');
       p.setAttribute('class','line');
