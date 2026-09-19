@@ -13,6 +13,9 @@ enableRobotsTXT = true
   author = "Piotr Goral"
   defaultTheme = "auto"
   ShowReadingTime = true
+  # Words per minute used for the reading-time estimate (Hugo's built-in default is 212).
+  # A page can override the number outright with `readingTime: 30` in its front matter.
+  readingTimeWPM = 300
   ShowToc = true
   TocOpen = false
   ShowCodeCopyButtons = true

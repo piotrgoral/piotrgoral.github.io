@@ -1,0 +1,35 @@
+{{- $scratch := newScratch }}
+
+{{- if not .Date.IsZero -}}
+    {{- $scratch.Add "meta" (slice (printf "<span title='%s'>%s</span>" (.Date) (.Date | time.Format (default ":date_long" site.Params.DateFormat)))) }}
+{{- end }}
+
+{{- if (.Param "ShowReadingTime") -}}
+    {{/* Reading time: page front matter `readingTime` wins; otherwise word count
+         divided by `readingTimeWPM` (site param, Hugo's built-in default is 212). */}}
+    {{- $rt := .ReadingTime }}
+    {{- with .Params.readingTime }}
+        {{- $rt = . }}
+    {{- else }}
+        {{- with site.Params.readingTimeWPM }}
+            {{- $rt = math.Ceil (div (float $.WordCount) (float .)) | int }}
+        {{- end }}
+    {{- end }}
+    {{- $scratch.Add "meta" (slice (printf "<span>%s</span>" (i18n "read_time" $rt | default (printf "%d min" $rt)))) }}
+{{- end }}
+
+{{- if (.Param "ShowWordCount") -}}
+    {{- $scratch.Add "meta" (slice (printf "<span>%s</span>" (i18n "words" .WordCount | default (printf "%d words" .WordCount)))) }}
+{{- end }}
+
+{{- if not (.Param "hideAuthor") -}}
+    {{- with (partial "author.html" .) }}
+        {{- $scratch.Add "meta" (slice (printf "<span>%s</span>" .)) }}
+    {{- end }}
+{{- end }}
+
+{{/* Combine all meta information into a single string with separators and render it as HTML.*/}}
+
+{{- with ($scratch.Get "meta") }}
+    {{- delimit . "&nbsp;·&nbsp;" | safeHTML -}}
+{{- end -}}
