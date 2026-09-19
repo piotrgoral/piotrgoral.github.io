@@ -163,15 +163,15 @@ The table below does that for sources that give an explicit or clearly reconstru
 | Anthropic, *Effective harnesses for long-running agents*[^2] | Claude Agent SDK as "a general-purpose agent harness" | cross-session | ✓ | ✓ | ~ | ~ | ✓ | ✓ | ✓ | – |
 | Anthropic, *How Claude Code works in large codebases*[^22] | "the ecosystem built around the model" | session | ✓ | ✓ | – | ~ | ~ | ~ | ~ | – |
 | Lilian Weng, *Harness Engineering for Self-Improvement*[^23] | "the system surrounding a base model that orchestrates execution" | cross-session | ✓ | ✓ | ✓ | ✓ | ~ | ✓ | ✓ | – |
-| MadPlay, *Beyond Prompts and Context*[^19] | "the full environment of scaffolding, constraints, and feedback loops" | cross-session | ✓ | ✓ | – | ✓ | ✓ | ✓ | ~ | – |
+| MadPlay, *Beyond Prompts and Context*[^19] | "the full environment of scaffolding, constraints, and feedback loops" | cross-session | ✓ | ✓ | – | ~ | ✓ | ✓ | ~ | – |
 | *Agent Harness Engineering: A Survey* (ETCLOVG)[^4] | "the engineered wrapper that turns model calls into bounded, stateful, tool-mediated task execution" | cross-session | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | – |
-| *Agent Harness for LLM Agents: A Survey* (ETCSLV)[^1] | "a software system that implements six runtime governance functions" | cross-session | ✓ | ✓ | ✓ | ~ | ~ | ✓ | ✓ | – |
+| *Agent Harness for LLM Agents: A Survey* (ETCSLV)[^1] | "a software system […] that implements six runtime governance functions" | cross-session | ✓ | ✓ | ✓ | ~ | ~ | ✓ | ✓ | – |
 | *From Question Answering to Task Completion*[^5] | "the runtime infrastructure that surrounds the model" | cross-session | ✓ | ✓ | ✓ | ~ | ✓ | ✓ | ✓ | – |
 | *Code as Agent Harness*[^6] | "the software layer that surrounds an LLM with tools, APIs, sandboxes, memory, validators…" | cross-session | ~ | ✓ | ✓ | ~ | ✓ | ✓ | ✓ | – |
 | Nicole Koenigstein, *Harness Engineering*[^12] | "the engineered layer around your AI agents" | cross-session | ✓ | ✓ | ~ | ✓ | ~ | ✓ | ✓ | – |
 | Tejas Kumar, *Harnesses in AI*[^8] | "everything around the model that gives it grounding in reality" | session | ✓ | ✓ | ✓ | ~ | ✓ | ✓ | – | – |
-| Harrison Chase, *When to Build Your Own Agent Harness*[^16] | "bring context to the model at the right point in time" | session | ✓ | ✓ | ✓ | ✓ | ✓ | – | ✓ | – |
-| YC Paper Club, *Why the Harness Matters More Than the Model*[^11] | "the layer between the LLM and the world" | cross-session | ~ | ✓ | ~ | ✓ | ✓ | – | ✓ | – |
+| Harrison Chase, *When to Build Your Own Agent Harness*[^16] | "bring context to the model at the right point in time" | session | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | – |
+| YC Paper Club, *Why the Harness Matters More Than the Model*[^11] | "the layer between the LLM and the world" | cross-session | ~ | ✓ | ~ | ✓ | ✓ | ~ | ✓ | – |
 | Sam Bhagwat (Mastra), *Every Harness Will Become a Claw*[^21] | agent → harness adds "durability and doggedness" | cross-session | ✓ | ✓ | – | ✓ | ✓ | – | ✓ | ✓ |
 | The Pragmatic Engineer, *Building Pi*[^9] | "everything around the LLM" (describing Claude Code) | session | ✓ | ✓ | ✓ | – | ~ | ~ | – | ✓ |
 {{% /wide-table %}}
@@ -255,7 +255,7 @@ The boundary: the prompt is the input passed directly to the model. When somethi
 
 ### Layer 2: Context
 
-The second layer comes from **context engineering**. Its unit of design is what the model sees across multiple steps. Its practices are compressing, offloading, and retrieving information[^5]. *Agent Harness Engineering: A Survey* scopes this stage the same way: "multi-step context optimization", or "optimize what the model sees"[^4].
+The second layer comes from **context engineering**. Its unit of design is what the model sees across multiple steps. Its practices are retrieving, compressing, and refreshing information[^5]. *Agent Harness Engineering: A Survey* scopes this stage the same way: "multi-step context optimization", or "optimize what the model sees"[^4].
 
 Components:
 
@@ -270,7 +270,7 @@ The boundary: context is the LLM agent's **single-session memory**. Its job is t
 
 The third layer comes from **agent frameworks that existed before the term harness**.
 
-ReAct-style loops established the basic cycle: reason, call a tool, observe the result, continue. LangChain provided the building blocks — model, messages, tools, middleware — and LangGraph added a stateful execution layer that manages workflow and state[^15]. Tools, checkpoints, interruption and resume, recursion limits, retry policies, and sub-agents were all established concepts there.
+ReAct-style loops established the basic cycle: reason, call a tool, observe the result, continue. LangChain provided the building blocks — model, messages, tools, middleware — and LangGraph added a stateful graph execution layer that manages workflow and state[^15]. Tools, checkpoints, interruption and resume, recursion limits, retry policies, and sub-agents were all established concepts there.
 
 <!-- TODO: add primary citations for this anchor (ReAct paper, LangGraph documentation); they are not in harness-materials/ yet. -->
 
