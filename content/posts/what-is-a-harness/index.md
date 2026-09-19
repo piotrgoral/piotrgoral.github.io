@@ -516,7 +516,11 @@ And the totals:
 | Hermes Agent | assistant | 24 | 3 | 0 | 88.9% |
 {{% /wide-table %}}
 
-One caveat before reading these numbers as a ranking: they measure fit to *framework rubric*, not the quality of the harness. A low score can reflect a deliberate architecture — a simple loop, behavior left to extensions, or enforcement in a companion service.
+Two caveats before reading these numbers as a ranking.
+
+First, they measure fit to the *framework rubric*, not the quality of the harness. A low score can reflect a deliberate architecture — a simple loop, or behavior left to extensions, as with Pi, which stays minimal by design.
+
+Second, the rubric is blind to two things. It doesn't distinguish a capability you *can* configure from one that is on by default — which understates SDKs such as Deep Agents and Cayu. And it stops at the repository boundary: OpenHands scores Partial on nearly half its checks, against a single Not matched, because the analyzed repository often only *configures* a capability — permissions, for example, are set up there but enforced by a separate Agent Server, outside the code I analyzed[^29].
 
 What the scorecard shows:
 
@@ -537,45 +541,6 @@ The scorecard also has a part that doesn't fit into a table: everything the mode
 - multimodal and realtime behavior.
 
 After careful considerations, these aren't gaps in the framework. They are implementation-specific extensions, and which ones a harness needs depends on its use case.
-
-### Patterns by harness type
-
-Before looking at what the scorecard means for each layer of the framework, let's step back and look at high-level patterns across the harnesses themselves.
-
-I split the scorecard into two groups — the **harness core** (chapter 3, only harness core layer) and the **extensions** from chapter 4 — and counted how many checks each harness fully matches in each.
-
-| Harness | Type | Harness Core (of 6) | Extensions (of 7) |
-|---|---|:--:|:--:|
-| Pi | coding | 2 | 1 |
-| Claude Code Python | coding | 2 | 1 |
-| Codex | coding | 5 | 5 |
-| OpenCode | coding | 1 | 2 |
-| DeepSeek Harness | coding | 4 | 0 |
-| OpenHands | computer use | 3 | 2 |
-| Deep Agents | SDK | 5 | 3 |
-| Cayu | SDK | 5 | 3 |
-| OpenClaw | assistant | 5 | 7 |
-| Hermes Agent | assistant | 6 | 6 |
-
-Three patterns stand out:
-
-- **Personal assistants have the most extensions.** OpenClaw fully matches all seven, Hermes six and it also ships adapters for around twenty messaging platforms, from Slack and WhatsApp to Signal and email[^33].
-- **Specialized harnesses aren't more focused on the core — they just have fewer extensions.** Personal assistants match the core at least as well as any coding harness.
-- **The core varies widely among coding harnesses.** Codex and DeepSeek Harness match four or five core checks, while Pi, Claude Code Python, and OpenCode match one or two.
-
-The exceptions are as interesting as the pattern:
-
-- **Codex** is a coding harness with the cleanest memory implementation in the whole set: rollout extraction, injection as developer instructions, and consolidation with usage-ranked pruning[^26].
-- **DeepSeek Harness** matches most of the core but no extensions at all. Its own stated substitute for memory: "the shared workspace is long-term memory"[^28].
-- **Deep Agents** is an SDK, yet it fully matches messaging and scheduled runs. Both come from an explicitly experimental interfaces component that ships WhatsApp, Telegram, and Discord adapters and a persistent cron scheduler[^30].
-- **OpenHands** fully matches a desktop app and scheduled runs — but about half of its checks are Partial. The analyzed repository only configures many capabilities; a separate Agent Server does the work — for example, it enforces the permissions set up in the UI[^29].
-
-The pattern has more than one possible explanation:
-
-- **SDK versus product.** SDKs such as Deep Agents and Cayu expose capabilities you *can* configure; products turn them on by default. The rubric doesn't distinguish the two.
-- **Capabilities outside the repository.** OpenHands shows how much depends on the repository boundary: the same product scores very differently depending on which repository you analyze.
-- **Deliberate scope.** Some harnesses choose to do less. Pi stays minimal by design and leaves a lot to user-authored extensions.
-- **Interaction duration.** Personal assistants are always on and reached from many places. Memory, messaging, and scheduling matter most exactly there — while a coding session in a terminal can do without them.
 
 The scorecard shows what exists; the next step is to test each boundary of the framework against it — which ones hold, which need qualifying, and which should move.
 
@@ -721,6 +686,8 @@ One surprise: an **LLM judge** is fully matched in six harnesses, while determin
 #### Cross-session memory
 
 The personal assistants lead: OpenClaw fully matches encoding, retrieval, and consolidation; Hermes matches encoding and retrieval, with consolidation Partial. Coding harnesses are mostly Not matched or Partial.
+
+The two exceptions sharpen the point rather than break it. **Codex** is a coding harness with the cleanest memory implementation in the whole set: rollout extraction, injection as developer instructions, and consolidation with usage-ranked pruning[^26]. **DeepSeek Harness** has none of the three, by choice — its own stated substitute is that "the shared workspace is long-term memory"[^28].
 
 **Verdict:** **confirmed** as an extension. Memory depends on how long and from where people interact with the agent — not a primitive every harness core needs.
 
