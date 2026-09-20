@@ -1,8 +1,7 @@
 ---
 title: "I Studied 10 Harnesses. Here’s What I Found."
-titleLines:
-  - "I Studied 10 Harnesses."
-  - "Here’s What I Found."
+displayTitle: "I Studied 10 Harnesses."
+subtitle: "Here’s What I Found."
 date: 2026-09-13
 slug: what-is-a-harness
 readingTime: 32
