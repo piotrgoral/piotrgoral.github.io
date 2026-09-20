@@ -471,32 +471,32 @@ Here is the full result. Rows are framework components, grouped by layer; column
 |---|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | | | *coding* | *coding* | *coding* | *coding* | *coding* | *computer use* | *SDK* | *SDK* | *assistant* | *assistant* |
 | Prompt | Instructions | M | M | M | M | M | M | M | M | M | M |
-| Prompt | Sampling (`temperature`, `top_k`, `top_p`) | P | P | N | M | P | P | P | M | P | P |
-| Prompt | Reasoning (`reasoning_effort`) | M | N | M | M | M | M | M | M | M | M |
-| Prompt | Response control (`response_format`, `stop`, `max_tokens`) | P | P | P | P | P | P | P | M | M | P |
+| Prompt | Sampling (`temperature`, `top_k`, `top_p`) | P | P | N | M | P | P | P | P | P | P |
+| Prompt | Reasoning (`reasoning_effort`) | M | N | M | M | M | P | M | M | M | M |
+| Prompt | Response control (`response_format`, `stop`, `max_tokens`) | P | P | P | P | P | P | P | P | M | P |
 | Context | Dynamic composition | M | M | M | M | M | M | M | M | M | M |
 | Context | Compaction | M | M | M | M | M | M | M | M | M | M |
 | Context | Trimming | P | M | M | M | M | P | M | M | M | M |
 | Context | Offloading | P | P | P | M | M | N | M | M | M | M |
 | LLM agent | Tools, including skills and MCPs | P | P | M | M | M | M | M | P | M | M |
 | LLM agent | State, including non-LLM run context | M | M | M | M | M | M | M | M | M | M |
-| LLM agent | Workflow — config (recursion limit, retry policy) | P | P | P | M | M | P | M | P | P | M |
+| LLM agent | Workflow — config (recursion limit, retry policy) | P | P | P | M | M | P | M | M | P | M |
 | LLM agent | Workflow — control (interruption, resume) | M | P | M | M | M | M | M | M | M | M |
 | LLM agent | Workflow — sub-agents (context sharing) | P | M | M | P | M | P | M | M | M | M |
-| Harness core | Environment — observations (files, terminal, logs) | M | M | M | P | M | M | M | M | M | M |
+| Harness core | Environment — observations (files, terminal, logs) | M | M | M | P | M | P | M | M | M | M |
 | Harness core | Environment — control (permissions, approvals) | P | M | M | M | M | P | M | M | M | M |
-| Harness core | Environment — runtime isolation | P | P | M | P | M | M | M | M | M | M |
+| Harness core | Environment — runtime isolation | P | P | M | P | M | P | M | M | M | M |
 | Harness core | Turn lifecycle hooks (step, turn, session) | M | P | M | P | M | P | M | P | M | M |
-| Harness core | Verification — linters, unit tests | N | P | P | P | P | P | P | M | P | M |
-| Harness core | Verification — LLM as a judge | P | N | M | N | N | M | M | M | M | M |
-| Extension: memory | Encoding | N | P | M | N | N | P | P | M | M | M |
-| Extension: memory | Retrieval | P | M | M | N | P | P | P | M | M | M |
-| Extension: memory | Consolidation | N | P | M | N | N | P | P | M | M | P |
+| Harness core | Verification — linters, unit tests | P | P | P | P | P | P | P | M | P | P |
+| Harness core | Verification — LLM as a judge | N | N | M | P | N | P | M | M | M | M |
+| Extension: memory | Encoding | N | P | M | P | N | P | P | M | M | M |
+| Extension: memory | Retrieval | P | M | M | P | P | P | P | M | M | M |
+| Extension: memory | Consolidation | N | P | M | P | N | N | P | M | M | P |
 | Extension: interfaces | TUI / CLI | M | P | M | M | P | P | M | P | M | M |
-| Extension: interfaces | Desktop app | N | P | M | M | N | M | N | N | M | M |
+| Extension: interfaces | Desktop app | N | P | P | M | N | M | N | N | M | M |
 | Extension: interfaces | Messaging apps (Slack, WhatsApp) | N | N | N | P | N | P | M | N | M | M |
-| Extension: interfaces | Scheduled runs (cron, recurring tasks) | N | N | P | N | P | M | M | P | M | M |
-| Operating on | Loop: `/goal` | N | N | M | N | M | M | M | N | M | M |
+| Extension: interfaces | Scheduled runs (cron, recurring tasks) | N | N | P | P | P | P | M | P | M | M |
+| Operating on | Loop: `/goal` | N | N | M | N | M | P | M | P | M | M |
 {{% /wide-table %}}
 
 <!-- TODO: link each cell (or at least each N/P) to evidence in a public appendix; for now evidence lives in harness-code-analysis/framework_summaries/inputs/*. -->
@@ -506,31 +506,31 @@ And the totals:
 {{% wide-table %}}
 | Harness | Type | Matched | Partial | Not matched | Full-match rate |
 |---|---|---:|---:|---:|---:|
+| OpenClaw | assistant | 24 | 3 | 0 | 88.9% |
+| Hermes Agent | assistant | 23 | 4 | 0 | 85.2% |
+| Deep Agents | SDK | 20 | 6 | 1 | 74.1% |
+| Codex | coding | 19 | 6 | 2 | 70.4% |
+| Cayu | SDK | 18 | 7 | 2 | 66.7% |
+| DeepSeek Harness | coding | 16 | 6 | 5 | 59.3% |
+| OpenCode | coding | 14 | 12 | 1 | 51.9% |
 | Pi | coding | 9 | 11 | 7 | 33.3% |
 | Claude Code Python | coding | 9 | 13 | 5 | 33.3% |
-| Codex | coding | 20 | 5 | 2 | 74.1% |
-| OpenCode | coding | 14 | 7 | 6 | 51.9% |
-| DeepSeek Harness | coding | 16 | 6 | 5 | 59.3% |
-| OpenHands | computer use | 13 | 13 | 1 | 48.1% |
-| Deep Agents | SDK | 20 | 6 | 1 | 74.1% |
-| Cayu | SDK | 19 | 5 | 3 | 70.4% |
-| OpenClaw | assistant | 24 | 3 | 0 | 88.9% |
-| Hermes Agent | assistant | 24 | 3 | 0 | 88.9% |
+| OpenHands | computer use | 7 | 18 | 2 | 25.9% |
 {{% /wide-table %}}
 
 Two caveats before reading these numbers as a ranking.
 
 First, they measure fit to the *framework rubric*, not the quality of the harness. A low score can reflect a deliberate architecture — a simple loop, or behavior left to extensions, as with Pi, which stays minimal by design.
 
-Second, the rubric is blind to two things. It doesn't distinguish a capability you *can* configure from one that is on by default — which understates SDKs such as Deep Agents and Cayu. And it stops at the repository boundary: OpenHands scores Partial on nearly half its checks, against a single Not matched, because the analyzed repository often only *configures* a capability — permissions, for example, are set up there but enforced by a separate Agent Server, outside the code I analyzed[^29].
+Second, the rubric is blind to two things. It doesn't distinguish a capability you *can* configure from one that is on by default — which understates SDKs such as Deep Agents and Cayu. And it stops at the repository boundary: OpenHands has 18 Partial ratings and two Not matched because the analyzed repository is Agent Canvas, a UI and control plane that often only *configures* or displays a capability. Permissions, sandboxing, critic evaluation, automation, and goal execution are enforced by separate services outside the code I analyzed[^29].
 
 What the scorecard shows:
 
 - **Four checks are universal.** Instructions, dynamic context composition, compaction, and state are fully matched in all ten harnesses.
-- **Several more are near-universal.** Reasoning control, interruption and resume, and environment observations are fully matched in nine; trimming and permissions in eight.
-- **Memory varies the most within one component.** Encoding is fully matched in four harnesses, retrieval in five, and consolidation in only three: Cayu, Codex, and OpenClaw.
-- **Deterministic verification is mostly Partial.** Only Cayu and Hermes fully match linters and unit tests; seven harnesses are Partial, and Pi is Not matched. An LLM judge is fully present in six harnesses.
-- **The `/goal` loop splits the group.** Six harnesses have it; four don't.
+- **Several more are near-universal.** Interruption and resume is fully matched in nine; reasoning control, environment observations, trimming, and permissions in eight.
+- **Memory varies the most within one component.** Encoding is fully matched in four harnesses, retrieval in five, and consolidation in only three: Cayu, Codex, and OpenClaw. OpenCode adds an indirect, instruction-file lifecycle: `/init` writes durable `AGENTS.md` guidance that later sessions load, and prompts the model to reconcile that guidance in place. OpenHands' `load_memory` toggle does not provide consolidation machinery in Agent Canvas.
+- **Deterministic verification is mostly Partial.** Only Cayu fully matches linters and unit tests; the other nine harnesses are Partial. An LLM judge is fully present in five harnesses.
+- **The `/goal` loop splits the group.** Five harnesses fully match it, Cayu and OpenHands are Partial, and three do not match it.
 - **Interfaces are the least consistent.** TUI/CLI is common; desktop apps, messaging, and scheduled runs come and go.
 
 The scorecard also has a part that doesn't fit into a table: everything the models reported under *Other*. The same areas came up again and again across harnesses:
@@ -556,44 +556,42 @@ Then, notes from the code: specific things I noticed in the implementations that
 
 | Layer | Framework check | Verdict |
 |---|---|:--|
-| **Prompt** | • **Instructions** — matched in all 10, the one universal component<br>• **Inference parameters** — reasoning control matched in 9, but sampling fully matched only in OpenCode and Cayu, response control only in Cayu and OpenClaw | <span class="verdict verdict--confirmed">confirmed</span> for instructions<br><span class="verdict verdict--qualified">qualified</span> for inference parameters |
+| **Prompt** | • **Instructions** — matched in all 10, the one universal component<br>• **Inference parameters** — reasoning control matched in 8, sampling fully matched only in OpenCode, and response control only in OpenClaw | <span class="verdict verdict--confirmed">confirmed</span> for instructions<br><span class="verdict verdict--qualified">qualified</span> for inference parameters |
 | **Context** | • **Composition and compaction** — matched in all 10<br>• **Trimming** — 8; **offloading** — 6<br>• The cleanest layer: components present, recognizable, and named close to the ones used in the framework | <span class="verdict verdict--confirmed">confirmed</span> |
-| **LLM agent** | • **State** — matched in all 10; **workflow control** — 9; **sub-agents** and **tools** — 7 each<br>• **Agentic loop** — lives in agent code in all 10, with no dedicated Plan/Edit/Review graph nodes in any of them | <span class="verdict verdict--confirmed">confirmed</span> |
-| **Harness core** | • **Environment** — observations matched in 9, permissions in 8, runtime isolation in 7<br>• **Turn lifecycle** — hooks present everywhere in some form<br>• **Verification** — at least partial everywhere, but linters and tests fully matched only in Cayu and Hermes | <span class="verdict verdict--confirmed">confirmed</span> for environment and lifecycle<br><span class="verdict verdict--qualified">qualified</span> for verification |
+| **LLM agent** | • **State** — matched in all 10; **workflow control** — 9; **sub-agents** and **tools** — 7 each<br>• **Agentic loop** — lives in agent code in the 9 repositories where the loop is present, with no dedicated Plan/Edit/Review graph nodes; OpenHands' loop lives in the separate Agent Server and is not inspectable from Agent Canvas | <span class="verdict verdict--confirmed">confirmed</span> |
+| **Harness core** | • **Environment** — observations and permissions matched in 8, runtime isolation in 6<br>• **Turn lifecycle** — hooks present everywhere in some form<br>• **Verification** — at least partial everywhere, but linters and tests fully matched only in Cayu | <span class="verdict verdict--confirmed">confirmed</span> for environment and lifecycle<br><span class="verdict verdict--qualified">qualified</span> for verification |
 | **Extensions** | • **Memory** — depends on the product: personal assistants have the most complete memory, coding harnesses are mostly Partial or Not matched<br>• **Interfaces** — TUI/CLI common, the rest vary; they answer the question chapter 4 left open by leaning toward the product shell, since a harness works the same from a terminal or from WhatsApp<br>• **Observability** — dashboards and tracing are built *on top of* harnesses, so they can't be read from harness code | <span class="verdict verdict--confirmed">confirmed</span><br><span class="verdict verdict--na">not analyzed</span> for observability |
 
 **The framework held up. No boundary moved, and nothing had to be added.**
 
-The framework's most contested choice was the agentic loop. Chapter 3 placed the loop and orchestration in the LLM agent, not the harness. The code supports that placement: in every harness I analyzed, the loop lives in agent code. Hermes is the clearest example: a single ReAct loop, the ~3,900-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33]. No graph library appears anywhere in the Hermes repository.
+The framework's most contested choice was the agentic loop. Chapter 3 placed the loop and orchestration in the LLM agent, not the harness. The code supports that placement in the analyzed repositories where the agent loop was implemented. Hermes is the clearest inspectable example: a single ReAct loop, the ~7,310-line `run_conversation` in `agent/conversation_loop.py`, driving model calls, tool dispatch, retries, fallbacks, compression, and post-turn hooks[^33].
 
 ### Notes from the code
 
 #### 1. Dedicated planning and reflection agents are rare
 
-Multi-agent diagrams often show a fixed workflow: a Plan → Edit → Reflect graph, with a dedicated agent or node for each phase. In the examined harnesses, I didn't find one. Each of them runs a single agent loop[^27][^30][^32][^33].
+Multi-agent diagrams often show a fixed workflow: a Plan → Edit → Reflect graph, with a dedicated agent or node for each phase. I didn't find one in the nine repositories where the agent loop was available to inspect[^27][^30][^32][^33].
 
 Sub-agents are a different story. Spawning them is common — seven harnesses fully match sub-agents, the other three partially. But a sub-agent is something the main agent calls when it decides it needs one, and it usually comes back with a summary. It is a tool call, not a node in a predetermined graph.
 
-Instead of workflow phases, I found planning and reflection directly in **modes** or **tools**.
+Instead of workflow phases, I found planning and reflection directly in **modes**, **commands**, or **tools**.
 
 - **Hermes:** `/plan` and `/review` are user commands that apply for a single turn; planning is a prompt injection, review is a spawned subagent, and reflection is a post-turn background fork[^33].
 - **OpenCode:** Plan and Build are real, first-class modes the user switches between, with permission-aware tool gating rather than separate graph nodes[^27].
-- **OpenClaw:** workflow behavior lives inside "a staged ReAct loop rather than an explicit Plan/Edit/Review graph"[^32].
-- **Deep Agents:** `write_todos` is a tool for planning, `/goal` is a user command for iteration, and a rubric middleware handles reflection — all layered over a single loop[^30].
+- **OpenClaw:** workflow behavior lives inside a staged ReAct loop rather than an explicit Plan/Edit/Review graph[^32].
+- **Deep Agents:** `/goal` is a user command for iteration, and rubric-based evaluation handles reflection — both layered over a single loop[^30].
 
 <!-- VISUAL TODO: a ReAct-style loop with a sub-agent spawn vs. a predetermined multi-node workflow (Plan → Edit → Reflect). -->
 
-**Takeaway:** in practice, planning and reflection are modes or tools around a single agent loop — switched on by the user or called by the agent — not dedicated agents in a fixed graph.
+**Takeaway:** in practice, planning and reflection are modes, commands, or tools around a single agent loop — activated by the user, the runtime, or the agent — not dedicated agents in a fixed graph.
 
 #### 2. Prompt caching and a stable tools registry
 
 The literature makes a dynamic tool registry look like the natural design. The *Agent Harness for Large Language Model Agents* survey lists registry patterns where tools are registered at runtime, scoped per task, or retrieved by semantic search at each step[^1]. A tool set that changes during a session reads like the advanced option.
 
-The personal assistants, OpenClaw and Hermes, go the other way, and the reason is prompt caching. Every time the beginning of the prompt changes, the provider's cache is invalidated and you pay for the whole prefix again. Tool definitions sit in that prefix. So they keep it — the system prompt and the tools that come with it — byte-stable for the whole session.
+The personal assistants, OpenClaw and Hermes, go the other way, and the reason is prompt caching. Every time the beginning of the prompt changes, the provider's cache is invalidated and you pay for the whole prefix again. Tool definitions sit in that prefix. Both assistants therefore keep reusable prompt and tool prefixes stable by default. Changes come from explicit user actions or configuration changes, such as updating permissions or reloading extensions and MCPs, rather than as a routine part of each turn[^32][^33].
 
-<!-- TODO: verify in Hermes/OpenClaw code that the tools registry is explicitly kept unchanged during a session (summaries confirm byte-stable prompts/prefixes, not the registry itself). -->
-
-They aren't alone. OpenCode keeps immutable context-epoch baselines and stable byte prefixes[^27], Pi exposes `cacheRetention`[^24], and Deep Agents ships `_prompt_caching.py`[^30].
+They aren't alone. OpenCode's V2/core runtime keeps immutable context-epoch baselines and stable byte prefixes[^27]. Pi exposes real `cacheRetention` controls without freezing its prompt or tool registry[^24]. Deep Agents deliberately orders the components that build the prompt to preserve prefix stability[^30].
 
 The strongest case is Hermes. There, caching doesn't just sit next to the framework — it shapes components the framework *does* cover[^33]:
 
@@ -616,7 +614,7 @@ It helps to keep three things apart:
 2. **Runtime and lifecycle mechanics that allow another step** — limits, interruptions, hooks.
 3. **A true outer loop** — something that evaluates progress against a goal and restarts or modifies execution.
 
-The `/goal` loop, where it exists (six harnesses), is the closest thing to the third. But even there it doesn't replace the inner loop — it re-enters it. Hermes routes goal continuation as a plain user message through the normal input path[^33]. From the agent's point of view, the goal loop is just someone asking it to keep going.
+The `/goal` loop is the closest thing to the third. Five harnesses fully match it, while Cayu and OpenHands partially match it. But even there it doesn't replace the inner loop — it re-enters it. Hermes routes goal continuation as a plain user message through the normal input path[^33]. From the agent's point of view, the goal loop is just someone asking it to keep going.
 
 **Takeaway:** this matches chapter 3 — the lifecycle defines *where* control applies, not *whether* to continue — and chapter 4, where the loop sits outside the harness.
 
@@ -624,14 +622,14 @@ The `/goal` loop, where it exists (six harnesses), is the closest thing to the t
 
 Chapter 3 left an open question: is verification built into the lifecycle, offered to the agent as a tool, delegated to an external evaluator, or absent?
 
-For linters and unit tests, the answer is mostly: **a tool**. Only Cayu and Hermes fully match that check. In seven harnesses, it's Partial — the repository has lint and test entry points, and the agent can run them through the tool *when it decides to*.
+For linters and unit tests, the answer is mostly: **a tool**. Only Cayu fully matches that check. The other nine harnesses are Partial — they expose checks in incomplete or indirect ways, often as commands the agent can run *when it decides to* rather than an automatic gate. Pi, for example, makes project checks reachable through bash and tells the agent to run them, but does not enforce an automatic gate[^24].
 
-The closest thing to automatic behavior is OpenCode, whose edit tools surface LSP diagnostics right after an edit — but there is still no deterministic post-edit or pre-finish test gate[^27]. The real exceptions:
+The closest thing to automatic behavior is OpenCode, whose edit tools surface LSP diagnostics right after an edit — but there is still no deterministic post-edit or pre-finish test gate[^27]. Two other examples:
 
-- **Hermes** infers build and test recipes per ecosystem and runs them through a verify runner, with verification acting as a **stop-gate policy**[^33].
-- **Cayu** has **completion verifiers** alongside named checks and test suites[^31].
+- **Hermes** infers build and test recipes per ecosystem and runs them through the human-facing `hermes verify` runner[^33].
+- **Cayu** enforces **completion verifiers** alongside named checks and test suites for contracted tasks[^31].
 
-One surprise: an **LLM judge** is fully matched in six harnesses, while deterministic linters and tests are fully matched in only two. A model checking a model is more often a finished harness feature than a test suite is. In Deep Agents, it even acts as a gate: the rubric middleware runs a grader subagent that catches the agent's attempt to stop and sends back `satisfied`, `needs_revision`, or `failed`[^30].
+One surprise: an **LLM judge** is fully matched in five harnesses, while deterministic linters and tests are fully matched in only one. OpenCode's user-invoked `/review` and OpenHands' externally executed critic are Partial; Pi's shipped `createJudge` callback is deterministic and makes no model call[^24][^27][^29]. A model checking a model is still more often a finished harness feature than a test suite is. In Deep Agents, the beta, opt-in rubric evaluator can act as a gate: it evaluates the transcript at the agent's attempt to stop and jumps back to the model on `needs_revision`. In the CLI, it remains inactive until `/goal` or a rubric supplies criteria[^30].
 
 **Takeaway:** verification can be *available* — a tool the agent may invoke — or *enforced* — a gate the harness owns. The OpenClaw, Claude Code Python, and DeepSeek Harness analyses independently recommended scoring the two separately[^25][^28][^32].
 
@@ -649,8 +647,8 @@ The most important boundary in that definition is the last sentence. The **LLM a
 
 Three findings stood out, because each one runs against a common picture of how harnesses work:
 
-- **One agent loop, not a planning and reflection graph.** None of the harnesses I analyzed runs a fixed Plan → Edit → Reflect workflow with a dedicated agent per phase. Planning and reflection show up as modes the user switches on or tools the agent calls. Sub-agents are common, but they're spawned on demand and return a summary — a tool call, not a node in a graph.
-- **Cross-session memory follows the product's shape.** Personal assistants, which people talk to for weeks and from many places, have the most complete memory. Most coding harnesses have little of it. The exceptions prove the point: Codex, a coding harness, has the full memory triad, while DeepSeek Harness has none by choice. Memory is a product decision, not a primitive every harness core needs.
+- **One agent loop, not a planning and reflection graph.** None of the nine repositories whose loop I could inspect runs a fixed Plan → Edit → Reflect workflow with a dedicated agent per phase. Planning and reflection show up as modes, commands, or tools. Sub-agents are common, but they're spawned on demand and return a summary — a tool call, not a node in a graph.
+- **Cross-session memory follows the product's shape.** Personal assistants, which people talk to for weeks and from many places, have the most complete memory. Most coding harnesses have little of it. Memory is a product decision, not a primitive every harness core needs.
 - **No separate outer harness loop.** The agent loop decides whether to continue. Lifecycle hooks can block, modify, or add information, but they aren't a second decision-maker. Even the `/goal` loop, where it exists, goes back into the same inner loop — from the agent's point of view, it's just someone asking it to keep going.
 
 Two more notes sharpened what sits *inside* the boundaries, without moving them: verification is mostly *available* as a tool and only sometimes *enforced* as a gate, and prompt caching quietly shapes memory, compaction, and sub-agents across layers.
