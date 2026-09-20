@@ -16,13 +16,16 @@
     --hair:#D3D9E0;
     --indent:26px;
     --gap:14px;
-    --gutter:72px;
+    --gutter:42px;
     --islandpad:15px;
-    --boardw:680px;
+    --boardw:900px;
 
     --island:#EACCD5;
     --island-hair:#C99AA8;
 
+    --foundation:#5C6875;
+    --foundation-island:#E1E5E9;
+    --foundation-island-hair:#AEB7C1;
     --harness:#96304A;
     --new:#3E6DC4;
     --new-wash:#EAF0FA;
@@ -52,11 +55,11 @@
 
   .board{
     display:grid;
-    grid-template-columns:minmax(0,1fr) 2px minmax(0,1fr);
+    grid-template-columns:minmax(150px,.68fr) minmax(260px,1.12fr) 2px minmax(240px,1fr);
     gap:0 calc(var(--gutter) / 2);
     align-items:stretch;
     min-width:var(--boardw);
-    max-width:900px;
+    max-width:1160px;
     margin:0 auto;
     padding-bottom:30px;
   }
@@ -73,17 +76,35 @@
   }
 
   .track{--tint:var(--ink)}
+  .track--foundation{--tint:var(--foundation)}
   .track--harness{--tint:var(--harness)}
   .track--ext{--tint:var(--new)}
   .track--op{--tint:var(--loop)}
 
   /* each block sits on its own raised, fully rounded ground */
+  .track--foundation,
   .track--harness,
   .track--ext,
   .track--op{
     position:relative;
     padding:13px var(--islandpad) 22px;
     border-radius:10px;
+  }
+  .track--foundation{
+    background:var(--foundation-island);
+    border:1px solid var(--foundation-island-hair);
+    box-shadow:
+      0 1px 2px rgba(22,30,41,.05),
+      0 16px 32px -16px rgba(92,104,117,.38);
+  }
+  .track--foundation .card{background:#fff}
+  .track--foundation em{font-weight:400}
+  .track--foundation .card b em{
+    display:inline;
+    margin:0;
+    font-size:inherit;
+    color:inherit;
+    line-height:inherit;
   }
   .track--harness{
     background:var(--island);
@@ -171,7 +192,7 @@
 
   @media (max-width:700px){
     body{padding:36px 20px 48px}
-    :root{--gutter:40px;--indent:20px;--islandpad:11px;--boardw:600px}
+    :root{--gutter:32px;--indent:20px;--islandpad:11px;--boardw:820px}
     .board{font-size:.9375rem}
     .track__head{font-size:1rem;padding:12px 14px 13px}
     .track--harness .track__head{font-size:1.0625rem}
@@ -188,9 +209,22 @@
 
 <main class="board">
 
+  <!-- EXISTING FOUNDATIONS -->
+  <div class="column">
+    <h3 class="column__title">Foundations</h3>
+    <section class="track track--foundation">
+      <h2 class="track__head">Existing layers</h2>
+      <ul class="branch">
+        <li class="node"><div class="node__row"><div class="card"><b>Prompt</b></div></div></li>
+        <li class="node"><div class="node__row"><div class="card"><b>Context</b></div></div></li>
+        <li class="node"><div class="node__row"><div class="card"><b><em>(LLM)</em> Agent</b></div></div></li>
+      </ul>
+    </section>
+  </div>
+
   <!-- FROM 0-1: HARNESS CORE -->
   <div class="column">
-    <h3 class="column__title">Framework from 0-1</h3>
+    <h3 class="column__title">Harness from 0-1</h3>
     <section class="track track--harness">
       <h2 class="track__head">Harness core</h2>
       <ul class="branch">
