@@ -36,7 +36,7 @@ enableRobotsTXT = true
 
   [[params.socialIcons]]
     name = "linkedin"
-    url = "https://linkedin.com/piotrgoral"
+    url = "https://www.linkedin.com/in/piotrgoral/"
 
 [menu]
   [[menu.main]]
